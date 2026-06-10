@@ -1,71 +1,148 @@
 {{template "base" .}}
 
 {{define "content"}}
-<div class="max-w-2xl mx-auto text-center py-16">
-  <p class="text-red-500 text-sm font-semibold tracking-widest uppercase mb-4">Formula 1</p>
-  <h1 class="text-7xl font-black tracking-tighter mb-4">
-    24<span class="text-red-500">-</span>0
-  </h1>
-  <p class="text-neutral-400 text-xl mb-12 leading-relaxed">
-    Spin a random F1 constructor and season.<br>
-    Draft one driver per era. Build your perfect team.<br>
-    Can they go <strong class="text-white">24 races, zero losses</strong>?
-  </p>
 
-  <form action="/game/start" method="POST">
-    <button type="submit"
-      class="bg-red-600 hover:bg-red-500 text-white font-bold text-lg px-10 py-4 rounded-lg transition-colors">
-      START DRAFTING
-    </button>
-  </form>
+<!-- ══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<div style="position:relative; min-height:88vh; display:flex; align-items:center; overflow:hidden;">
 
-  <div class="mt-16 grid grid-cols-3 gap-6 text-left">
-    <div class="bg-neutral-900 rounded-lg p-5">
-      <div class="text-2xl mb-2">🎰</div>
-      <h3 class="font-bold mb-1">Spin the slot</h3>
-      <p class="text-neutral-400 text-sm">A random F1 constructor and season is revealed each round.</p>
+  <!-- Track grid background with radial fade -->
+  <div class="track-grid" style="position:absolute; inset:0;
+    -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 45%, black 10%, transparent 78%);
+    mask-image: radial-gradient(ellipse 70% 80% at 50% 45%, black 10%, transparent 78%);"></div>
+
+  <!-- Warm red core glow -->
+  <div style="position:absolute; inset:0; background:radial-gradient(ellipse 50% 55% at 50% 38%, rgba(225,6,0,.055) 0%, transparent 72%); pointer-events:none;"></div>
+
+  <!-- Speed lines (horizontal) -->
+  <div style="position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(90deg, transparent, transparent 88px, rgba(225,6,0,.025) 88px, rgba(225,6,0,.025) 89px);"></div>
+
+  <!-- Hero content -->
+  <div style="max-width:860px; margin:0 auto; padding:5rem 1.5rem 6rem; text-align:center; position:relative; z-index:10; width:100%;">
+
+    <!-- Eyebrow -->
+    <div style="display:inline-flex; align-items:center; gap:.8rem; margin-bottom:2rem; animation:slideUp .5s ease both .08s;">
+      <div style="height:1px; width:40px; background:var(--red);"></div>
+      <span class="f-mono" style="font-size:.62rem; letter-spacing:.26em; text-transform:uppercase; color:var(--red);">Formula 1 · Fantasy Draft</span>
+      <div style="height:1px; width:40px; background:var(--red);"></div>
     </div>
-    <div class="bg-neutral-900 rounded-lg p-5">
-      <div class="text-2xl mb-2">🏎️</div>
-      <h3 class="font-bold mb-1">Draft a driver</h3>
-      <p class="text-neutral-400 text-sm">Pick one of the two drivers who raced for that team that year.</p>
+
+    <!-- Main title -->
+    <h1 class="f-display" style="font-weight:900; line-height:.88; margin-bottom:1.6rem;
+        font-size:clamp(6.5rem,19vw,15rem); letter-spacing:-.02em;
+        animation:slideUp .5s ease both .16s;">
+      <span style="color:var(--text);">24</span><span style="color:var(--red);">–</span><span style="color:var(--text);">0</span>
+    </h1>
+
+    <!-- Tagline -->
+    <p style="font-size:1.18rem; color:var(--text-2); line-height:1.65; max-width:440px; margin:0 auto 1rem;
+              animation:slideUp .5s ease both .24s;">
+      Spin a random F1 constructor and season.<br>
+      Draft one driver per era. Build your perfect team.
+    </p>
+    <p class="f-display" style="font-weight:700; font-size:1.35rem; letter-spacing:.04em; margin-bottom:2.8rem;
+              animation:slideUp .5s ease both .30s;">
+      Can they go <span style="color:var(--red);">24 races, zero losses</span>?
+    </p>
+
+    <!-- CTA -->
+    <div style="animation:slideUp .5s ease both .38s;">
+      <form action="/game/start" method="POST" style="display:inline-block;">
+        <button type="submit" class="btn-launch">▶&nbsp;&nbsp;Start Drafting</button>
+      </form>
     </div>
-    <div class="bg-neutral-900 rounded-lg p-5">
-      <div class="text-2xl mb-2">🏆</div>
-      <h3 class="font-bold mb-1">Simulate the season</h3>
-      <p class="text-neutral-400 text-sm">Five drivers. Five eras. One perfect 24-race season — if you're good enough.</p>
+
+    <!-- Mini stats row -->
+    <div style="display:flex; justify-content:center; align-items:center; gap:0; margin-top:3.5rem;
+                animation:slideUp .5s ease both .46s;">
+      <div style="text-align:center; padding:0 2rem;">
+        <div class="f-mono" style="font-size:1.6rem; font-weight:700; color:var(--red);">5</div>
+        <div class="section-label" style="margin-top:.25rem;">Eras</div>
+      </div>
+      <div style="width:1px; height:36px; background:var(--border-2);"></div>
+      <div style="text-align:center; padding:0 2rem;">
+        <div class="f-mono" style="font-size:1.6rem; font-weight:700; color:var(--text-2);">2</div>
+        <div class="section-label" style="margin-top:.25rem;">Drivers</div>
+      </div>
+      <div style="width:1px; height:36px; background:var(--border-2);"></div>
+      <div style="text-align:center; padding:0 2rem;">
+        <div class="f-mono" style="font-size:1.6rem; font-weight:700; color:var(--text-2);">24</div>
+        <div class="section-label" style="margin-top:.25rem;">Races</div>
+      </div>
+      <div style="width:1px; height:36px; background:var(--border-2);"></div>
+      <div style="text-align:center; padding:0 2rem;">
+        <div class="f-mono" style="font-size:1.6rem; font-weight:700; color:var(--text-2);">0</div>
+        <div class="section-label" style="margin-top:.25rem;">Losses</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════ -->
+<div style="max-width:900px; margin:0 auto; padding:0 1.5rem 5rem;">
+
+  <div class="divider-red" style="margin-bottom:3.5rem;"></div>
+
+  <!-- Section header -->
+  <p class="section-label" style="text-align:center; margin-bottom:2rem;">How to Play</p>
+
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; margin-bottom:4rem;">
+    <!-- Step 1 -->
+    <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem 1.4rem; position:relative; overflow:hidden; animation:slideUp .4s ease both .08s;">
+      <div style="position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--red); margin-bottom:.8rem; letter-spacing:.1em;">01</div>
+      <h3 class="f-display" style="font-weight:800; font-size:1.3rem; text-transform:uppercase; margin-bottom:.6rem; letter-spacing:.02em;">Spin the Slot</h3>
+      <p style="font-size:.9rem; color:var(--text-2); line-height:1.6;">A random F1 constructor and season is revealed each round. Luck of the grid.</p>
+    </div>
+    <!-- Step 2 -->
+    <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem 1.4rem; position:relative; overflow:hidden; animation:slideUp .4s ease both .15s;">
+      <div style="position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--red); margin-bottom:.8rem; letter-spacing:.1em;">02</div>
+      <h3 class="f-display" style="font-weight:800; font-size:1.3rem; text-transform:uppercase; margin-bottom:.6rem; letter-spacing:.02em;">Draft a Driver</h3>
+      <p style="font-size:.9rem; color:var(--text-2); line-height:1.6;">Pick one of the two drivers who raced for that team that year. Choose wisely.</p>
+    </div>
+    <!-- Step 3 -->
+    <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem 1.4rem; position:relative; overflow:hidden; animation:slideUp .4s ease both .22s;">
+      <div style="position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--red); margin-bottom:.8rem; letter-spacing:.1em;">03</div>
+      <h3 class="f-display" style="font-weight:800; font-size:1.3rem; text-transform:uppercase; margin-bottom:.6rem; letter-spacing:.02em;">Simulate</h3>
+      <p style="font-size:.9rem; color:var(--text-2); line-height:1.6;">Five drivers. Five eras. One perfect 24-race season — if you're built for it.</p>
     </div>
   </div>
 
-  <div class="mt-8 bg-neutral-900 rounded-lg p-5 text-left">
-    <h3 class="font-bold mb-2 text-sm text-neutral-400 uppercase tracking-wider">The 5 Eras</h3>
-    <div class="grid grid-cols-5 gap-2 text-center text-sm">
-      <div class="bg-neutral-800 rounded p-2">
-        <div class="text-xs text-neutral-500">Round 1</div>
-        <div class="font-semibold">Classic</div>
-        <div class="text-xs text-neutral-500">1950–79</div>
-      </div>
-      <div class="bg-neutral-800 rounded p-2">
-        <div class="text-xs text-neutral-500">Round 2</div>
-        <div class="font-semibold">Turbo</div>
-        <div class="text-xs text-neutral-500">1980–93</div>
-      </div>
-      <div class="bg-neutral-800 rounded p-2">
-        <div class="text-xs text-neutral-500">Round 3</div>
-        <div class="font-semibold">Schumacher</div>
-        <div class="text-xs text-neutral-500">1994–09</div>
-      </div>
-      <div class="bg-neutral-800 rounded p-2">
-        <div class="text-xs text-neutral-500">Round 4</div>
-        <div class="font-semibold">Hybrid</div>
-        <div class="text-xs text-neutral-500">2010–19</div>
-      </div>
-      <div class="bg-neutral-800 rounded p-2">
-        <div class="text-xs text-neutral-500">Round 5</div>
-        <div class="font-semibold">Modern</div>
-        <div class="text-xs text-neutral-500">2020–24</div>
-      </div>
+  <!-- Eras timing board -->
+  <p class="section-label" style="text-align:center; margin-bottom:1.2rem;">The 5 Eras</p>
+  <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:.4rem;">
+    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:1rem .8rem; text-align:center; animation:slideUp .35s ease both .10s;">
+      <div class="section-label" style="margin-bottom:.35rem;">Round 1</div>
+      <div class="f-display" style="font-weight:800; font-size:1.1rem; text-transform:uppercase; letter-spacing:.04em;">Classic</div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.35rem;">1950–79</div>
+    </div>
+    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:1rem .8rem; text-align:center; animation:slideUp .35s ease both .16s;">
+      <div class="section-label" style="margin-bottom:.35rem;">Round 2</div>
+      <div class="f-display" style="font-weight:800; font-size:1.1rem; text-transform:uppercase; letter-spacing:.04em;">Turbo</div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.35rem;">1980–93</div>
+    </div>
+    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:1rem .8rem; text-align:center; animation:slideUp .35s ease both .22s;">
+      <div class="section-label" style="margin-bottom:.35rem;">Round 3</div>
+      <div class="f-display" style="font-weight:800; font-size:1.1rem; text-transform:uppercase; letter-spacing:.04em;">Schumi</div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.35rem;">1994–09</div>
+    </div>
+    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:1rem .8rem; text-align:center; animation:slideUp .35s ease both .28s;">
+      <div class="section-label" style="margin-bottom:.35rem;">Round 4</div>
+      <div class="f-display" style="font-weight:800; font-size:1.1rem; text-transform:uppercase; letter-spacing:.04em;">Hybrid</div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.35rem;">2010–19</div>
+    </div>
+    <div style="background:var(--surf); border:1px solid var(--border-2); border-left:2px solid var(--red); border-radius:2px; padding:1rem .8rem; text-align:center; animation:slideUp .35s ease both .34s;">
+      <div class="section-label" style="margin-bottom:.35rem;">Round 5</div>
+      <div class="f-display" style="font-weight:800; font-size:1.1rem; text-transform:uppercase; letter-spacing:.04em;">Modern</div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.35rem;">2020–24</div>
     </div>
   </div>
+
 </div>
 {{end}}

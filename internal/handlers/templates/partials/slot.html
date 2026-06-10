@@ -1,44 +1,65 @@
 {{define "slot.html"}}
 {{$s := .Session}}
 {{$pick := .Pick}}
-<div>
-  <p class="text-green-400 font-semibold mb-1 text-center">
-    ✓ {{if eq $pick.Type "component"}}{{$pick.Component.Name}}{{else}}{{$pick.Driver.Name}}{{end}} added to your team!
-  </p>
-  <p class="text-neutral-500 text-xs mb-5 text-center">{{len $s.Picks}} of 7 picks made</p>
 
+<!-- Pick confirmation -->
+<div class="anim-slot" style="margin-bottom:1.4rem; padding:1.2rem; background:var(--surf); border:1px solid rgba(52,211,153,.2); border-radius:2px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, #34d399 0%, transparent 100%);"></div>
+  <div style="display:flex; align-items:center; gap:.7rem;">
+    <span style="color:#34d399; font-size:1.1rem; flex-shrink:0;">✓</span>
+    <div>
+      <p class="f-display" style="font-weight:700; font-size:1rem; color:#34d399; letter-spacing:.01em;">
+        {{if eq $pick.Type "component"}}{{$pick.Component.Name}}{{else}}{{$pick.Driver.Name}}{{end}}
+        &nbsp;added to your team!
+      </p>
+      <p class="f-mono" style="font-size:.65rem; color:var(--text-3); margin-top:.2rem;">{{len $s.Picks}} of 7 picks made</p>
+    </div>
+  </div>
+</div>
+
+<!-- Next action(s) -->
+<div class="anim-slide-up">
   {{if $s.NeedsDriver}}
-  <div class="mb-5">
+  <div style="margin-bottom:1rem;">
     <button
       hx-post="/game/{{$s.ID}}/spin"
       hx-target="#spin-area"
       hx-swap="innerHTML"
-      class="w-full bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-4 rounded-xl transition-colors text-lg">
-      Spin for Driver {{if eq (len ($s.DriverPicks)) 1}}2{{else}}1{{end}}
+      style="width:100%; border:none; cursor:pointer; display:block; text-align:center;
+             background:var(--red); color:#fff; font-family:'Barlow Condensed',sans-serif;
+             font-weight:900; font-size:1.05rem; letter-spacing:.12em; text-transform:uppercase;
+             padding:1rem 2rem; border-radius:2px;
+             transition:background .18s, box-shadow .18s;
+             animation:launchPulse 2.8s ease-in-out infinite;"
+      onmouseover="this.style.background='#ff1800'; this.style.animation='none'; this.style.boxShadow='0 0 40px rgba(225,6,0,.45)'"
+      onmouseout="this.style.background='var(--red)'; this.style.animation='launchPulse 2.8s ease-in-out infinite'; this.style.boxShadow='none'">
+      🎲 &nbsp; Spin for Driver {{if eq (len ($s.DriverPicks)) 1}}2{{else}}1{{end}}
     </button>
   </div>
   {{end}}
 
   {{if $s.RemainingComponentCategories}}
-  <div>
-    <p class="text-xs text-neutral-500 uppercase tracking-widest mb-2">Draft a Team Role</p>
-    <div class="grid gap-2">
+  <div style="margin-top:{{if $s.NeedsDriver}}1.4rem{{else}}0{{end}};">
+    <p class="section-label" style="margin-bottom:.8rem;">Draft a Team Role</p>
+    <div style="display:flex; flex-direction:column; gap:.4rem;">
       {{range $s.RemainingComponentCategories}}
       <button
         hx-post="/game/{{$s.ID}}/spin/component/{{.ID}}"
         hx-target="#spin-area"
         hx-swap="innerHTML"
-        class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-blue-500 rounded-xl p-3 text-left transition-all group flex items-center gap-3">
-        <div class="flex-1">
-          <p class="text-sm font-bold text-neutral-200">{{.Name}}</p>
-          <p class="text-xs text-neutral-400">{{.Description}}</p>
+        class="role-btn"
+        style="padding:.9rem 1.2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+        <div style="text-align:left;">
+          <p class="f-display" style="font-weight:700; font-size:1rem; color:var(--text); letter-spacing:.02em; margin-bottom:.15rem;">{{.Name}}</p>
+          <p style="font-size:.8rem; color:var(--text-2); line-height:1.5;">{{.Description}}</p>
         </div>
-        <div class="text-neutral-600 group-hover:text-blue-400 text-xl">→</div>
+        <span style="color:var(--text-3); font-size:1rem; flex-shrink:0;">→</span>
       </button>
       {{end}}
     </div>
   </div>
   {{end}}
 </div>
+
 {{template "lineup.html" (map "Session" $s "OOB" true)}}
 {{end}}

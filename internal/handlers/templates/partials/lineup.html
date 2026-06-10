@@ -1,38 +1,45 @@
 {{define "lineup.html"}}
 {{$s := .Session}}
-<div id="lineup" class="mb-8"{{if .OOB}} hx-swap-oob="true"{{end}}>
-  <!-- Driver slots -->
-  <p class="text-xs text-neutral-600 uppercase tracking-widest mb-2">Drivers</p>
-  <div class="grid grid-cols-2 gap-3 mb-5">
+<div id="lineup" style="margin-bottom:2rem;"{{if .OOB}} hx-swap-oob="true"{{end}}>
+
+  <!-- ── Drivers ──────────────────────────────── -->
+  <p class="section-label" style="margin-bottom:.7rem;">Drivers</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1.4rem;">
     {{range $s.DriverPicks}}
-    <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-3">
-      <div class="font-bold text-white">{{.Driver.Name}}</div>
-      <div class="text-xs text-neutral-400 mt-0.5">{{.Driver.Constructor}} '{{mod .Driver.Season 100 | printf "%02d"}} · Pace {{printf "%.0f" .Driver.PaceScore}}</div>
+    <div class="lineup-slot driver-slot" style="padding:.85rem 1rem .85rem 1.3rem;">
+      <div class="f-display" style="font-weight:700; font-size:1rem; color:var(--text); line-height:1.2;">{{.Driver.Name}}</div>
+      <div class="f-mono" style="font-size:.65rem; color:var(--text-3); margin-top:.3rem; line-height:1.6;">
+        {{.Driver.Constructor}} &apos;{{mod .Driver.Season 100 | printf "%02d"}}
+        <span style="color:var(--text-3); margin-left:.4rem;">·</span>
+        <span style="color:var(--text-2); margin-left:.4rem;">Pace {{printf "%.0f" .Driver.PaceScore}}</span>
+      </div>
     </div>
     {{end}}
     {{range emptySlots $s.Picks}}
-    <div class="bg-neutral-900 border border-dashed border-neutral-700 rounded-lg p-3 text-center text-neutral-600">
-      <span class="text-sm">Empty Driver Seat</span>
+    <div class="empty-slot" style="padding:.85rem 1rem; display:flex; align-items:center; justify-content:center;">
+      <span style="font-size:.8rem; color:var(--text-3);">Empty Driver Seat</span>
     </div>
     {{end}}
   </div>
 
-  <!-- Component slots -->
-  <p class="text-xs text-neutral-600 uppercase tracking-widest mb-2">Team Staff & Car</p>
-  <div class="grid grid-cols-5 gap-2">
+  <!-- ── Team Roles ────────────────────────────── -->
+  <p class="section-label" style="margin-bottom:.7rem;">Team Staff &amp; Car</p>
+  <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:.4rem;">
     {{range $s.ComponentPicks}}
-    <div class="bg-neutral-800 border border-blue-900 rounded-lg p-2 text-center">
-      <div class="text-xs text-blue-400 font-bold mb-1">{{categoryName .Component.Category}}</div>
-      <div class="text-xs font-semibold text-white leading-tight">{{.Component.Name}}</div>
-      <div class="text-xs text-neutral-500 mt-0.5">{{printf "%.0f" .Component.Score}}</div>
+    <div class="lineup-slot comp-slot" style="padding:.7rem .6rem .7rem .9rem; text-align:left;">
+      <div class="f-display" style="font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em;
+                  color:var(--blue); margin-bottom:.3rem;">{{categoryName .Component.Category}}</div>
+      <div style="font-size:.78rem; font-weight:600; color:var(--text); line-height:1.3;">{{.Component.Name}}</div>
+      <div class="f-mono" style="font-size:.6rem; color:var(--text-3); margin-top:.25rem;">{{printf "%.0f" .Component.Score}}</div>
     </div>
     {{end}}
     {{range emptyComponentSlots $s.Picks}}
-    <div class="bg-neutral-900 border border-dashed border-neutral-700 rounded-lg p-2 text-center text-neutral-600">
-      <div class="text-lg">?</div>
-      <div class="text-xs">Role</div>
+    <div class="empty-slot" style="padding:.7rem .5rem; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.2rem;">
+      <span style="font-size:1rem; color:var(--text-3); opacity:.4;">?</span>
+      <span style="font-size:.65rem; color:var(--text-3);">Role</span>
     </div>
     {{end}}
   </div>
+
 </div>
 {{end}}

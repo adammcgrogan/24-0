@@ -1,82 +1,105 @@
 {{define "spin_result.html"}}
 {{$s := .Session}}
 {{$spin := .Spin}}
-<div>
-  <div class="mb-5 text-center">
-    <h3 class="text-xl font-black">{{$spin.Constructor}}
-      <span class="text-neutral-400 font-normal text-base">'{{mod $spin.Season 100 | printf "%02d"}}</span>
-    </h3>
-    <p class="text-xs text-neutral-500 mt-1">Pick one driver for your team</p>
-  </div>
 
-  <div class="grid grid-cols-2 gap-4 mb-6">
-    <!-- Driver A -->
-    <button
-      hx-post="/game/{{$s.ID}}/pick/a"
-      hx-target="#spin-area"
-      hx-swap="innerHTML"
-      class="bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 hover:border-red-500 rounded-xl p-5 text-left transition-all group">
-      <div class="text-lg font-bold group-hover:text-red-400 transition-colors">{{$spin.DriverA.Name}}</div>
-      <div class="text-sm text-neutral-400 mt-1">{{$spin.DriverA.Season}} · {{$spin.DriverA.Constructor}}</div>
-      <div class="mt-3 grid grid-cols-3 gap-2 text-center">
-        <div class="bg-neutral-900 rounded p-2">
-          <div class="text-lg font-black">{{$spin.DriverA.Wins}}</div>
-          <div class="text-xs text-neutral-500">Wins</div>
-        </div>
-        <div class="bg-neutral-900 rounded p-2">
-          <div class="text-lg font-black">{{$spin.DriverA.Poles}}</div>
-          <div class="text-xs text-neutral-500">Poles</div>
-        </div>
-        <div class="bg-neutral-900 rounded p-2">
-          <div class="text-lg font-black">{{printf "%.0f" $spin.DriverA.Points}}</div>
-          <div class="text-xs text-neutral-500">Pts</div>
-        </div>
-      </div>
-      <div class="mt-2 text-xs text-neutral-500">
-        Pace <span class="text-white font-semibold">{{printf "%.0f" $spin.DriverA.PaceScore}}</span>
-        <span class="text-neutral-700 ml-1">/ 100</span>
-      </div>
-    </button>
-
-    <!-- Driver B -->
-    <button
-      hx-post="/game/{{$s.ID}}/pick/b"
-      hx-target="#spin-area"
-      hx-swap="innerHTML"
-      class="bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 hover:border-red-500 rounded-xl p-5 text-left transition-all group">
-      <div class="text-lg font-bold group-hover:text-red-400 transition-colors">{{$spin.DriverB.Name}}</div>
-      <div class="text-sm text-neutral-400 mt-1">{{$spin.DriverB.Season}} · {{$spin.DriverB.Constructor}}</div>
-      <div class="mt-3 grid grid-cols-3 gap-2 text-center">
-        <div class="bg-neutral-900 rounded p-2">
-          <div class="text-lg font-black">{{$spin.DriverB.Wins}}</div>
-          <div class="text-xs text-neutral-500">Wins</div>
-        </div>
-        <div class="bg-neutral-900 rounded p-2">
-          <div class="text-lg font-black">{{$spin.DriverB.Poles}}</div>
-          <div class="text-xs text-neutral-500">Poles</div>
-        </div>
-        <div class="bg-neutral-900 rounded p-2">
-          <div class="text-lg font-black">{{printf "%.0f" $spin.DriverB.Points}}</div>
-          <div class="text-xs text-neutral-500">Pts</div>
-        </div>
-      </div>
-      <div class="mt-2 text-xs text-neutral-500">
-        Pace <span class="text-white font-semibold">{{printf "%.0f" $spin.DriverB.PaceScore}}</span>
-        <span class="text-neutral-700 ml-1">/ 100</span>
-      </div>
-    </button>
-  </div>
-
-  {{if gt $s.ConstructorSkipsLeft 0}}
-  <div class="flex justify-center">
-    <button
-      hx-post="/game/{{$s.ID}}/skip/constructor"
-      hx-target="#spin-area"
-      hx-swap="innerHTML"
-      class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-sm px-4 py-2 rounded-lg transition-colors">
-      🔄 Different team ({{$s.ConstructorSkipsLeft}} left)
-    </button>
-  </div>
-  {{end}}
+<!-- Constructor reveal -->
+<div class="anim-slot" style="margin-bottom:1.6rem; text-align:center; padding:1.4rem; background:var(--surf); border:1px solid var(--border); border-radius:2px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
+  <p class="section-label" style="margin-bottom:.5rem;">Constructor Drawn</p>
+  <h3 class="f-display" style="font-weight:900; font-size:1.7rem; letter-spacing:.02em; line-height:1.1;">
+    {{$spin.Constructor}}
+    <span style="color:var(--text-3); font-size:1.1rem; font-weight:400;">&apos;{{mod $spin.Season 100 | printf "%02d"}}</span>
+  </h3>
+  <p style="font-size:.8rem; color:var(--text-3); margin-top:.4rem;">Pick one driver for your team</p>
 </div>
+
+<!-- Driver pick cards -->
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.2rem;">
+
+  <!-- Driver A -->
+  <button
+    hx-post="/game/{{$s.ID}}/pick/a"
+    hx-target="#spin-area"
+    hx-swap="innerHTML"
+    class="pick-card anim-slide-left"
+    style="padding:1.4rem; text-align:left; background:none; border:none;">
+    <div class="f-display" style="font-weight:800; font-size:1.15rem; color:var(--text); line-height:1.2; margin-bottom:.3rem; letter-spacing:.01em;">{{$spin.DriverA.Name}}</div>
+    <div style="font-size:.75rem; color:var(--text-3); margin-bottom:1rem;">{{$spin.DriverA.Season}} · {{$spin.DriverA.Constructor}}</div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin-bottom:.75rem;">
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverA.Wins}}</div>
+        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Wins</div>
+      </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverA.Poles}}</div>
+        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Poles</div>
+      </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.DriverA.Points}}</div>
+        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Pts</div>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <span style="font-size:.72rem; color:var(--text-3);">Pace</span>
+      <div style="display:flex; align-items:center; gap:.4rem; flex:1; margin-left:.6rem;">
+        <div style="flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden;">
+          <div style="height:100%; width:{{printf "%.0f" $spin.DriverA.PaceScore}}%; background:var(--red); border-radius:2px;"></div>
+        </div>
+        <span class="f-mono" style="font-size:.7rem; color:var(--text); font-weight:700; flex-shrink:0;">{{printf "%.0f" $spin.DriverA.PaceScore}}</span>
+      </div>
+    </div>
+  </button>
+
+  <!-- Driver B -->
+  <button
+    hx-post="/game/{{$s.ID}}/pick/b"
+    hx-target="#spin-area"
+    hx-swap="innerHTML"
+    class="pick-card anim-slide-right"
+    style="padding:1.4rem; text-align:left; background:none; border:none;">
+    <div class="f-display" style="font-weight:800; font-size:1.15rem; color:var(--text); line-height:1.2; margin-bottom:.3rem; letter-spacing:.01em;">{{$spin.DriverB.Name}}</div>
+    <div style="font-size:.75rem; color:var(--text-3); margin-bottom:1rem;">{{$spin.DriverB.Season}} · {{$spin.DriverB.Constructor}}</div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin-bottom:.75rem;">
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverB.Wins}}</div>
+        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Wins</div>
+      </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverB.Poles}}</div>
+        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Poles</div>
+      </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.DriverB.Points}}</div>
+        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Pts</div>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <span style="font-size:.72rem; color:var(--text-3);">Pace</span>
+      <div style="display:flex; align-items:center; gap:.4rem; flex:1; margin-left:.6rem;">
+        <div style="flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden;">
+          <div style="height:100%; width:{{printf "%.0f" $spin.DriverB.PaceScore}}%; background:var(--red); border-radius:2px;"></div>
+        </div>
+        <span class="f-mono" style="font-size:.7rem; color:var(--text); font-weight:700; flex-shrink:0;">{{printf "%.0f" $spin.DriverB.PaceScore}}</span>
+      </div>
+    </div>
+  </button>
+
+</div>
+
+<!-- Reroll button -->
+{{if gt $s.ConstructorSkipsLeft 0}}
+<div style="display:flex; justify-content:center;">
+  <button
+    hx-post="/game/{{$s.ID}}/skip/constructor"
+    hx-target="#spin-area"
+    hx-swap="innerHTML"
+    class="btn-secondary">
+    🔄 &nbsp;Different team &nbsp;<span style="color:var(--text-3); font-size:.8em;">({{$s.ConstructorSkipsLeft}} left)</span>
+  </button>
+</div>
+{{end}}
 {{end}}

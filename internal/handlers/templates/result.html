@@ -4,117 +4,152 @@
 {{$s := .Session}}
 {{$tier := .Tier}}
 {{$stats := .Stats}}
-<div class="max-w-3xl mx-auto py-8">
+<div style="max-width:820px; margin:0 auto; padding:2.5rem 1.5rem 5rem;">
 
-  <!-- Final score -->
-  <div class="text-center mb-8">
-    <p class="text-sm text-neutral-500 uppercase tracking-widest mb-2">Your Season Result</p>
-    <div class="text-8xl font-black mb-2">
-      {{$s.Wins}}<span class="text-red-500">-</span>{{sub 24 $s.Wins}}
+  <!-- ── Score hero ────────────────────────────── -->
+  <div style="text-align:center; margin-bottom:3rem; position:relative; padding:3rem 1rem 2.5rem; overflow:hidden;">
+    <!-- Subtle track grid behind score -->
+    <div class="track-grid" style="position:absolute; inset:0; opacity:.35;
+      -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black, transparent 80%);
+      mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black, transparent 80%);"></div>
+
+    <p class="section-label" style="margin-bottom:1rem; position:relative;">Your Season Result</p>
+
+    <div class="f-display anim-slot" style="font-weight:900; line-height:.82; font-size:clamp(6rem,18vw,12rem);
+                letter-spacing:-.02em; position:relative;">
+      <span>{{$s.Wins}}</span><span style="color:var(--red);">–</span><span>{{sub 24 $s.Wins}}</span>
     </div>
-    <div class="text-2xl font-bold mb-1 {{$tier.Class}}">{{$tier.Name}}</div>
-    <p class="text-sm text-neutral-500">{{$tier.Description}}</p>
+
+    <div class="f-display anim-slide-up" style="font-weight:800; font-size:1.6rem; letter-spacing:.06em;
+                text-transform:uppercase; margin-top:.8rem; margin-bottom:.4rem;" >
+      <span class="{{$tier.Class}}">{{$tier.Name}}</span>
+    </div>
+    <p style="font-size:.88rem; color:var(--text-3); position:relative;">{{$tier.Description}}</p>
   </div>
 
-  <!-- Team roster with roles -->
-  <div class="grid grid-cols-5 gap-3 mb-8">
-    {{range $s.Picks}}
-    <div class="bg-neutral-900 rounded-lg p-3 text-center text-sm">
-      <div class="text-xs bg-red-900 text-red-300 rounded px-1.5 py-0.5 font-bold inline-block mb-2">{{.Era.Role}}</div>
-      <div class="font-bold text-white leading-tight">{{.Driver.Name}}</div>
-      <div class="text-xs text-neutral-400 mt-1">{{.Driver.Constructor}}</div>
-      <div class="text-xs text-neutral-500">'{{mod .Driver.Season 100 | printf "%02d"}}</div>
-      <div class="text-xs text-neutral-600 mt-1">Pace {{printf "%.0f" .Driver.PaceScore}}</div>
+  <!-- ── Team roster ──────────────────────────── -->
+  <div style="margin-bottom:2.5rem;">
+    <p class="section-label" style="margin-bottom:1rem;">Your Squad</p>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem;">
+      {{range $s.Picks}}
+      <div class="carbon anim-slide-up" style="border:1px solid var(--border); border-radius:2px; padding:.9rem .7rem; text-align:center; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; right:0; height:2px; background:var(--red); opacity:.6;"></div>
+        <div class="f-display" style="font-size:.65rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+                    background:rgba(225,6,0,.15); color:var(--red); border-radius:2px; padding:.18rem .4rem; display:inline-block; margin-bottom:.5rem;">
+          {{.Era.Role}}
+        </div>
+        <div class="f-display" style="font-weight:800; font-size:.95rem; color:var(--text); line-height:1.2; margin-bottom:.4rem;">{{.Driver.Name}}</div>
+        <div style="font-size:.72rem; color:var(--text-2); line-height:1.5;">{{.Driver.Constructor}}</div>
+        <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.2rem;">'{{mod .Driver.Season 100 | printf "%02d"}}</div>
+        <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.3rem;">Pace <span style="color:var(--text-2);">{{printf "%.0f" .Driver.PaceScore}}</span></div>
+      </div>
+      {{end}}
     </div>
-    {{end}}
   </div>
 
-  <!-- Race-by-race grid -->
+  <!-- ── Race calendar ────────────────────────── -->
   {{if $s.RaceResults}}
-  <div class="bg-neutral-900 rounded-xl p-6 mb-6">
-    <h3 class="font-bold mb-1 text-sm uppercase tracking-widest text-neutral-400">Race Calendar</h3>
-    <p class="text-xs text-neutral-600 mb-4">
-      🏙️ Street &nbsp; 🔧 Technical &nbsp; 🌧️ Wet &nbsp; 🏁 Normal
-    </p>
-    <div class="grid grid-cols-6 gap-2">
+  <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem; margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.2rem; flex-wrap:wrap; gap:.5rem;">
+      <p class="section-label">Race Calendar</p>
+      <p style="font-size:.7rem; color:var(--text-3);">
+        <span style="font-family:'Space Mono',monospace;">🏙️</span> Street &nbsp;
+        <span style="font-family:'Space Mono',monospace;">🔧</span> Technical &nbsp;
+        <span style="font-family:'Space Mono',monospace;">🌧️</span> Wet &nbsp;
+        <span style="font-family:'Space Mono',monospace;">🏁</span> Normal
+      </p>
+    </div>
+
+    <!-- Race grid — cells animate in with staggered delay -->
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:3px; margin-bottom:1rem;">
       {{range $i, $r := $s.RaceResults}}
-      <div class="rounded-lg p-2 text-center text-xs {{if $r.DNF}}bg-neutral-800 border border-neutral-700{{else if $r.Won}}bg-green-900 border border-green-700{{else}}bg-red-950 border border-red-900{{end}}"
+      <div class="race-cell"
+           style="animation-delay: calc({{$i}} * 28ms); padding:.45rem .3rem; text-align:center;
+                  {{if $r.DNF}}background:var(--surf-3); border:1px solid var(--border-2);
+                  {{else if $r.Won}}background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.3);
+                  {{else}}background:rgba(225,6,0,.07); border:1px solid rgba(225,6,0,.2);
+                  {{end}}"
            title="{{$r.Race}}{{if $r.Won}} — {{$r.HeroDriver}}{{end}}">
-        <div class="text-neutral-500 text-xs mb-0.5">
+        <div style="font-size:.65rem; margin-bottom:.1rem; line-height:1;">
           {{if eq $r.CircuitType "street"}}🏙️{{else if eq $r.CircuitType "technical"}}🔧{{else if eq $r.CircuitType "wet"}}🌧️{{else}}🏁{{end}}
         </div>
         {{if $r.DNF}}
-        <div class="font-black text-neutral-500 text-xs">DNF</div>
+        <div class="f-mono" style="font-size:.62rem; font-weight:700; color:var(--text-3);">DNF</div>
         {{else if $r.Won}}
-        <div class="font-black text-green-400 text-xs">WIN</div>
+        <div class="f-mono" style="font-size:.62rem; font-weight:700; color:#34d399;">WIN</div>
         {{else}}
-        <div class="font-black text-red-700 text-xs">—</div>
+        <div class="f-mono" style="font-size:.62rem; font-weight:700; color:rgba(225,6,0,.5);">—</div>
         {{end}}
-        <div class="text-neutral-600 text-xs mt-0.5">{{$r.Cumulative}}</div>
+        <div class="f-mono" style="font-size:.58rem; color:var(--text-3); margin-top:.1rem;">{{$r.Cumulative}}</div>
       </div>
       {{end}}
     </div>
 
     <!-- Race legend -->
-    <div class="mt-4 grid grid-cols-4 gap-x-4 gap-y-1 text-xs text-neutral-600">
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:.2rem .8rem;">
       {{range $i, $r := $s.RaceResults}}
-      <div class="truncate">
-        <span class="{{if $r.DNF}}text-neutral-500{{else if $r.Won}}text-green-600{{else}}text-red-800{{end}}">R{{add $i 1}}</span>
-        {{shortRaceName $r.Race}}
+      <div style="font-size:.65rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-3);">
+        <span class="f-mono" style="{{if $r.DNF}}color:var(--text-3){{else if $r.Won}}color:#34d399{{else}}color:rgba(225,6,0,.45){{end}};">R{{add $i 1}}</span>
+        &nbsp;{{shortRaceName $r.Race}}
       </div>
       {{end}}
     </div>
   </div>
 
-  <!-- Stats + key wins -->
-  <div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-neutral-900 rounded-xl p-5">
-      <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Season Summary</div>
-      <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
-          <span class="text-neutral-400">Wins</span>
-          <span class="font-bold text-green-400">{{$stats.Wins}}</span>
+  <!-- ── Stats row ────────────────────────────── -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.5rem;">
+    <!-- Season summary -->
+    <div class="stat-box" style="padding:1.4rem 1.4rem;">
+      <p class="section-label" style="margin-bottom:1rem;">Season Summary</p>
+      <div style="display:flex; flex-direction:column; gap:.55rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+          <span style="color:var(--text-2);">Wins</span>
+          <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.Wins}}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-neutral-400">Losses</span>
-          <span class="font-bold text-red-500">{{$stats.Losses}}</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+          <span style="color:var(--text-2);">Losses</span>
+          <span class="f-mono" style="font-weight:700; color:var(--red);">{{$stats.Losses}}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-neutral-400">DNFs</span>
-          <span class="font-bold text-neutral-500">{{$stats.DNFs}}</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+          <span style="color:var(--text-2);">DNFs</span>
+          <span class="f-mono" style="font-weight:700; color:var(--text-3);">{{$stats.DNFs}}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-neutral-400">Win rate</span>
-          <span class="font-bold text-white">{{$stats.WinPct}}%</span>
+        <div style="height:1px; background:var(--border); margin:.2rem 0;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+          <span style="color:var(--text-2);">Win rate</span>
+          <span class="f-mono" style="font-weight:700; color:var(--text);">{{$stats.WinPct}}%</span>
         </div>
       </div>
     </div>
-    <div class="bg-neutral-900 rounded-xl p-5">
-      <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Records</div>
-      <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
-          <span class="text-neutral-400">Longest streak</span>
-          <span class="font-bold text-green-400">{{$stats.BestStreak}} wins</span>
+    <!-- Records -->
+    <div class="stat-box" style="padding:1.4rem 1.4rem;">
+      <p class="section-label" style="margin-bottom:1rem;">Records</p>
+      <div style="display:flex; flex-direction:column; gap:.55rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+          <span style="color:var(--text-2);">Longest streak</span>
+          <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.BestStreak}} wins</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-neutral-400">First win</span>
-          <span class="font-bold text-white">{{if gt $stats.FirstWin 0}}R{{$stats.FirstWin}}{{else}}—{{end}}</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+          <span style="color:var(--text-2);">First win</span>
+          <span class="f-mono" style="font-weight:700; color:var(--text);">{{if gt $stats.FirstWin 0}}R{{$stats.FirstWin}}{{else}}—{{end}}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Key wins with hero drivers -->
+  <!-- ── Key wins ──────────────────────────────── -->
   {{if $stats.KeyWins}}
-  <div class="bg-neutral-900 rounded-xl p-5 mb-6">
-    <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Standout Moments</div>
-    <div class="space-y-2">
+  <div class="stat-box" style="padding:1.4rem; margin-bottom:1.5rem;">
+    <p class="section-label" style="margin-bottom:1rem;">Standout Moments</p>
+    <div style="display:flex; flex-direction:column; gap:.5rem;">
       {{range $stats.KeyWins}}
-      <div class="flex items-center gap-3 text-sm">
-        <span class="text-green-400 font-bold w-6 text-right">W</span>
-        <span class="text-neutral-400 flex-1">{{.Race}}</span>
+      <div style="display:flex; align-items:center; gap:.8rem; font-size:.85rem;">
+        <span class="f-mono" style="font-weight:700; color:#34d399; width:1.2rem; text-align:right; flex-shrink:0;">W</span>
+        <span style="color:var(--text-2); flex:1;">{{.Race}}</span>
         {{if .HeroDriver}}
-        <span class="text-neutral-600 text-xs">{{.HeroDriver}} <span class="text-red-900">({{.HeroRole}})</span></span>
+        <span style="font-size:.72rem; color:var(--text-3);">
+          {{.HeroDriver}} <span style="color:rgba(225,6,0,.5);">({{.HeroRole}})</span>
+        </span>
         {{end}}
       </div>
       {{end}}
@@ -123,25 +158,29 @@
   {{end}}
   {{end}}
 
-  <!-- Share + actions -->
-  <div class="flex flex-col gap-3 items-center mb-6">
+  <!-- ── Actions ───────────────────────────────── -->
+  <div style="display:flex; flex-direction:column; align-items:center; gap:.8rem; margin-bottom:2rem;">
     <button
-      onclick="navigator.clipboard.writeText(window.location.href); this.textContent='Copied!';"
-      class="bg-neutral-800 hover:bg-neutral-700 px-6 py-2 rounded-lg text-sm transition-colors">
+      onclick="navigator.clipboard.writeText(window.location.href); this.textContent='✓ Copied!';"
+      class="btn-secondary"
+      style="clip-path:none; border-radius:2px; padding:.65rem 1.8rem;">
       Copy share link
     </button>
-    <a href="/" class="text-neutral-400 hover:text-white text-sm transition-colors">Play again</a>
+    <a href="/" style="font-size:.85rem; color:var(--text-3); text-decoration:none; transition:color .15s;"
+       onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">
+      Play again →
+    </a>
   </div>
 
-  <!-- Leaderboard submit -->
-  <div class="bg-neutral-900 rounded-xl p-6">
-    <h3 class="font-bold mb-3">Submit to leaderboard</h3>
-    <form action="/result/{{$s.ID}}/submit" method="POST" class="flex gap-3">
-      <input type="text" name="name" placeholder="Your name"
-        maxlength="50" required
-        class="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-red-500" />
-      <button type="submit"
-        class="bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">
+  <!-- ── Leaderboard submit ─────────────────────── -->
+  <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem; position:relative; overflow:hidden;">
+    <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
+    <p class="section-label" style="margin-bottom:.5rem;">Submit to Leaderboard</p>
+    <h3 class="f-display" style="font-weight:800; font-size:1.2rem; letter-spacing:.02em; margin-bottom:1.2rem;">Make it official.</h3>
+    <form action="/result/{{$s.ID}}/submit" method="POST" style="display:flex; gap:.6rem; align-items:stretch;">
+      <input type="text" name="name" placeholder="Your name" maxlength="50" required
+             style="flex:1;" />
+      <button type="submit" class="btn-launch" style="clip-path:none; border-radius:2px; animation:none; font-size:.92rem; padding:.65rem 1.6rem; flex-shrink:0;">
         Submit
       </button>
     </form>
