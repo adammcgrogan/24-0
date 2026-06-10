@@ -1,23 +1,24 @@
 CREATE TABLE IF NOT EXISTS sessions (
-    id                      VARCHAR(16)  PRIMARY KEY,
-    picks                   JSONB        NOT NULL DEFAULT '[]',
-    constructor_skips_left  INT          NOT NULL DEFAULT 1,
-    era_skips_left          INT          NOT NULL DEFAULT 1,
-    pending_spin            JSONB,
-    wins                    INT,
-    tier                    VARCHAR(80),
-    completed               BOOLEAN      NOT NULL DEFAULT FALSE,
-    race_results            JSONB,
-    created_at              TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    id                       VARCHAR(16)  PRIMARY KEY,
+    picks                    JSONB        NOT NULL DEFAULT '[]',
+    constructor_skips_left   INT          NOT NULL DEFAULT 1,
+    era_skips_left           INT          NOT NULL DEFAULT 1,
+    pending_spin             JSONB,
+    pending_component_spin   JSONB,
+    wins                     INT,
+    tier                     VARCHAR(80),
+    completed                BOOLEAN      NOT NULL DEFAULT FALSE,
+    race_results             JSONB,
+    created_at               TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- Migration for existing deployments: add race_results if it doesn't exist yet.
+-- Migrations for existing deployments.
 DO $$ BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name='sessions' AND column_name='race_results'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='sessions' AND column_name='race_results') THEN
         ALTER TABLE sessions ADD COLUMN race_results JSONB;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='sessions' AND column_name='pending_component_spin') THEN
+        ALTER TABLE sessions ADD COLUMN pending_component_spin JSONB;
     END IF;
 END $$;
 

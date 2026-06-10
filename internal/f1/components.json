@@ -1,0 +1,42 @@
+[
+  {"id":"enzo_ferrari","name":"Enzo Ferrari","category":"principal","era":"classic","description":"The Commendatore. Built Ferrari from a racing passion into a dynasty.","score":82,"specialty":"normal"},
+  {"id":"colin_chapman","name":"Colin Chapman","category":"principal","era":"classic","description":"Lotus founder. 'Simplify, then add lightness.' Ruthlessly innovative.","score":88,"specialty":"technical"},
+  {"id":"ron_dennis","name":"Ron Dennis","category":"principal","era":"turbo","description":"Obsessive attention to detail. Built McLaren into F1's most clinical operation.","score":87,"specialty":"normal"},
+  {"id":"frank_williams","name":"Frank Williams","category":"principal","era":"turbo","description":"Fierce independence. Williams Racing became the benchmark for engineering excellence.","score":80,"specialty":"normal"},
+  {"id":"jean_todt","name":"Jean Todt","category":"principal","era":"schumacher","description":"Systematic and ruthless. Masterminded Ferrari's five consecutive constructors' titles.","score":90,"specialty":"normal"},
+  {"id":"flavio_briatore","name":"Flavio Briatore","category":"principal","era":"schumacher","description":"Maverick operator. Got the best from Schumacher at Benetton and Alonso at Renault.","score":74,"specialty":"normal"},
+  {"id":"christian_horner","name":"Christian Horner","category":"principal","era":"hybrid","description":"Relentless pressure and political instinct. Built Red Bull's golden era.","score":86,"specialty":"street"},
+  {"id":"toto_wolff","name":"Toto Wolff","category":"principal","era":"modern","description":"Ice-cold strategist. Led Mercedes to seven consecutive constructors' championships.","score":92,"specialty":"all"},
+
+  {"id":"gordon_murray","name":"Gordon Murray","category":"td","era":"classic","description":"Brabham BT46B and McLaren MP4/4 designer. Ground-effect pioneer.","score":82,"specialty":"technical"},
+  {"id":"john_barnard","name":"John Barnard","category":"td","era":"turbo","description":"Carbon-fibre pioneer at McLaren. Transformed how F1 cars are constructed.","score":78,"specialty":"normal"},
+  {"id":"adrian_newey_williams","name":"Adrian Newey (Williams)","category":"td","era":"turbo","description":"Early Newey at Williams — already bending aerodynamic theory to his will.","score":88,"specialty":"technical"},
+  {"id":"rory_byrne","name":"Rory Byrne","category":"td","era":"schumacher","description":"Ferrari's quiet genius. Designed the F2002 and F2004 — two of the most dominant cars ever.","score":88,"specialty":"normal"},
+  {"id":"adrian_newey_redbull","name":"Adrian Newey (Red Bull)","category":"td","era":"hybrid","description":"The greatest car designer in F1 history. Newey at his peak produced the RB6, RB9, and beyond.","score":97,"specialty":"technical"},
+  {"id":"james_allison","name":"James Allison","category":"td","era":"modern","description":"Mercedes technical chief. Masterminded the W11 — possibly the most dominant F1 car ever made.","score":84,"specialty":"all"},
+
+  {"id":"steve_matchett","name":"Steve Matchett","category":"engineer","era":"schumacher","description":"Benetton mechanic who kept Schumacher's car race-ready. The unsung hero of '94 and '95.","score":72,"specialty":"normal"},
+  {"id":"ross_brawn_engineer","name":"Ross Brawn","category":"engineer","era":"schumacher","description":"Schumacher's technical brain at Ferrari. Masterminded dozens of race-winning strategies.","score":90,"specialty":"wet"},
+  {"id":"jock_clear","name":"Jock Clear","category":"engineer","era":"turbo","description":"Villeneuve's, then Button's engineer. Calm under pressure, instinctive tyre reader.","score":76,"specialty":"wet"},
+  {"id":"peter_bonnington","name":"Peter Bonnington","category":"engineer","era":"hybrid","description":"'Bono.' Hamilton's race engineer throughout the Mercedes dynasty — the perfect partnership.","score":88,"specialty":"wet"},
+  {"id":"gianpiero_lambiase","name":"Gianpiero Lambiase","category":"engineer","era":"modern","description":"'GP.' Verstappen's engineer. Keeps Max in check and extracts every tenth on strategy.","score":86,"specialty":"all"},
+  {"id":"riccardo_adami","name":"Riccardo Adami","category":"engineer","era":"hybrid","description":"'Rocky.' Vettel's engineer at Red Bull and Ferrari. Outstanding at car setup.","score":80,"specialty":"technical"},
+
+  {"id":"lotus_72","name":"Lotus 72","category":"chassis","era":"classic","description":"Revolutionary wedge design that dominated the 1970 and 1972 seasons.","score":76,"specialty":"normal"},
+  {"id":"tyrrell_006","name":"Tyrrell 006","category":"chassis","era":"classic","description":"Jackie Stewart's championship machine. Efficient, reliable, beautifully balanced.","score":68,"specialty":"technical"},
+  {"id":"mclaren_mp44","name":"McLaren MP4/4","category":"chassis","era":"turbo","description":"Won 15 of 16 races in 1988. The most dominant car in F1 history.","score":97,"specialty":"all"},
+  {"id":"williams_fw14b","name":"Williams FW14B","category":"chassis","era":"turbo","description":"Mansell's 1992 title-winner. Active suspension, traction control, semi-automatic gearbox.","score":90,"specialty":"technical"},
+  {"id":"ferrari_f2004","name":"Ferrari F2004","category":"chassis","era":"schumacher","description":"Schumacher won 13 of 18 races. Until 2023 it was the benchmark for a dominant F1 season.","score":92,"specialty":"normal"},
+  {"id":"ferrari_f2002","name":"Ferrari F2002","category":"chassis","era":"schumacher","description":"Schumacher clinched the title with six rounds to spare. A masterpiece of F1 engineering.","score":88,"specialty":"normal"},
+  {"id":"mercedes_w11","name":"Mercedes W11","category":"chassis","era":"modern","description":"Hamilton's 2020 title car. 95% win rate. Benchmarked against the MP4/4 as F1's greatest.","score":95,"specialty":"all"},
+  {"id":"redbull_rb19","name":"Red Bull RB19","category":"chassis","era":"modern","description":"Verstappen won 21 of 22 races in 2023. The most statistically dominant season in history.","score":97,"specialty":"all"},
+  {"id":"mercedes_w05","name":"Mercedes W05","category":"chassis","era":"hybrid","description":"The 2014 car that launched the hybrid era dynasty. Twin power unit advantage was decisive.","score":86,"specialty":"normal"},
+  {"id":"redbull_rb9","name":"Red Bull RB9","category":"chassis","era":"hybrid","description":"Vettel's 2013 four-peat machine. Won nine consecutive races to end the season.","score":84,"specialty":"technical"},
+
+  {"id":"ross_brawn_strategy","name":"Ross Brawn","category":"strategy","era":"schumacher","description":"The greatest strategist in F1 history. The two-stop in Monaco '92. The 2005 pitstop.","score":93,"specialty":"wet"},
+  {"id":"nigel_stepney","name":"Nigel Stepney","category":"strategy","era":"schumacher","description":"Ferrari's technical operations chief. Oversaw race strategy during the Schumacher dominance.","score":72,"specialty":"normal"},
+  {"id":"james_vowles","name":"James Vowles","category":"strategy","era":"hybrid","description":"Mercedes strategy chief throughout their dominant era. Every undercut was perfectly timed.","score":86,"specialty":"wet"},
+  {"id":"tim_schenken","name":"Tim Schenken","category":"strategy","era":"hybrid","description":"Race director turned FIA steward. As a strategy operator, valued calm analytical thinking.","score":72,"specialty":"normal"},
+  {"id":"hannah_schmitz","name":"Hannah Schmitz","category":"strategy","era":"modern","description":"Red Bull's race strategy chief. The architect of Verstappen's championship campaigns.","score":90,"specialty":"wet"},
+  {"id":"will_courtenay","name":"Will Courtenay","category":"strategy","era":"modern","description":"Former Red Bull strategist who joined McLaren. Key to their 2024 resurgence.","score":80,"specialty":"street"}
+]

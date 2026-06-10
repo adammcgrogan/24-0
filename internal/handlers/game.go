@@ -44,7 +44,21 @@ func Spin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	spin, err := game.Spin(f1.All(), remaining, nil)
+	// The player may select which era to draft by passing era_id in the form.
+	// If absent (or not a remaining era), pick randomly.
+	_ = r.ParseForm()
+	var lockedEra *f1.Era
+	if eraID := r.FormValue("era_id"); eraID != "" {
+		for _, e := range remaining {
+			if e.ID == eraID {
+				era := e
+				lockedEra = &era
+				break
+			}
+		}
+	}
+
+	spin, err := game.Spin(f1.All(), remaining, lockedEra)
 	if err != nil {
 		log.Printf("Spin error for session %s: %v", id, err)
 		http.Error(w, "spin failed", http.StatusInternalServerError)
@@ -198,14 +212,9 @@ func Pick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If all 5 eras filled, run simulation and complete.
-	if len(s.Picks) == len(f1.Eras) {
-		lineup := make([]f1.Driver, len(s.Picks))
-		for i, p := range s.Picks {
-			lineup[i] = p.Driver
-		}
-
-		result := game.SimulateSeason(lineup, game.CachedFieldAverage)
+	// If all 10 picks made, run simulation and complete.
+	if s.IsComplete() {
+		result := game.SimulateSeason(s.Picks, game.CachedFieldAverage)
 		tier := game.TierForWins(result.Wins).Name
 
 		if err := db.Complete(r.Context(), id, result.Wins, tier, result.Races); err != nil {
@@ -223,6 +232,124 @@ func Pick(w http.ResponseWriter, r *http.Request) {
 		"Session": s,
 		"Pick":    pick,
 		"SlotNum": len(s.Picks),
+	})
+}
+
+// SpinComponent handles POST /game/{id}/spin/component/{category}.
+// Generates a pair of component options for the player to choose from.
+func SpinComponent(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	category := chi.URLParam(r, "category")
+
+	s, err := db.GetSession(r.Context(), id)
+	if err != nil {
+		handleSessionError(w, r, err)
+		return
+	}
+	if s.Completed {
+		http.Error(w, "game already completed", http.StatusBadRequest)
+		return
+	}
+
+	// Validate this category hasn't been picked yet.
+	valid := false
+	for _, cat := range s.RemainingComponentCategories() {
+		if cat.ID == category {
+			valid = true
+			break
+		}
+	}
+	if !valid {
+		http.Error(w, "component category not available", http.StatusBadRequest)
+		return
+	}
+
+	cspin, err := game.SpinComponent(category)
+	if err != nil {
+		log.Printf("SpinComponent error for session %s: %v", id, err)
+		http.Error(w, "spin failed", http.StatusInternalServerError)
+		return
+	}
+	if err := db.SaveComponentSpin(r.Context(), id, cspin); err != nil {
+		log.Printf("SaveComponentSpin error for session %s: %v", id, err)
+		http.Error(w, "spin failed", http.StatusInternalServerError)
+		return
+	}
+
+	renderPartial(w, "component_spin.html", map[string]any{
+		"Session": s,
+		"Spin":    cspin,
+	})
+}
+
+// PickComponent handles POST /game/{id}/pick/component/{index}.
+// Records the player's component choice (a or b).
+func PickComponent(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	index := chi.URLParam(r, "index") // "a" or "b"
+
+	s, err := db.GetSession(r.Context(), id)
+	if err != nil {
+		handleSessionError(w, r, err)
+		return
+	}
+	if s.Completed {
+		http.Error(w, "game already completed", http.StatusBadRequest)
+		return
+	}
+	if s.PendingComponentSpin == nil {
+		http.Error(w, "no active component spin", http.StatusBadRequest)
+		return
+	}
+
+	var chosen f1.TeamComponent
+	switch index {
+	case "a":
+		chosen = s.PendingComponentSpin.OptionA
+	case "b":
+		chosen = s.PendingComponentSpin.OptionB
+	default:
+		http.Error(w, "invalid index", http.StatusBadRequest)
+		return
+	}
+
+	pick := f1.Pick{
+		Type:      "component",
+		Component: &chosen,
+		Era:       s.PendingComponentSpin.Era,
+	}
+
+	if err := db.AddComponentPick(r.Context(), id, pick); err != nil {
+		log.Printf("AddComponentPick error for session %s: %v", id, err)
+		http.Error(w, "pick failed", http.StatusInternalServerError)
+		return
+	}
+
+	s, err = db.GetSession(r.Context(), id)
+	if err != nil {
+		log.Printf("GetSession after AddComponentPick error: %v", err)
+		http.Error(w, "pick failed", http.StatusInternalServerError)
+		return
+	}
+
+	if s.IsComplete() {
+		result := game.SimulateSeason(s.Picks, game.CachedFieldAverage)
+		tier := game.TierForWins(result.Wins).Name
+
+		if err := db.Complete(r.Context(), id, result.Wins, tier, result.Races); err != nil {
+			log.Printf("Complete error for session %s: %v", id, err)
+			http.Error(w, "simulation failed", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("HX-Redirect", "/result/"+id)
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	renderPartial(w, "slot.html", map[string]any{
+		"Session": s,
+		"Pick":    pick,
 	})
 }
 

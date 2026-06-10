@@ -16,11 +16,11 @@
     <p class="text-sm text-neutral-500">{{$tier.Description}}</p>
   </div>
 
-  <!-- Driver lineup -->
+  <!-- Team roster with roles -->
   <div class="grid grid-cols-5 gap-3 mb-8">
     {{range $s.Picks}}
     <div class="bg-neutral-900 rounded-lg p-3 text-center text-sm">
-      <div class="text-xs text-neutral-500 mb-1">{{.Era.Name}}</div>
+      <div class="text-xs bg-red-900 text-red-300 rounded px-1.5 py-0.5 font-bold inline-block mb-2">{{.Era.Role}}</div>
       <div class="font-bold text-white leading-tight">{{.Driver.Name}}</div>
       <div class="text-xs text-neutral-400 mt-1">{{.Driver.Constructor}}</div>
       <div class="text-xs text-neutral-500">'{{mod .Driver.Season 100 | printf "%02d"}}</div>
@@ -32,25 +32,31 @@
   <!-- Race-by-race grid -->
   {{if $s.RaceResults}}
   <div class="bg-neutral-900 rounded-xl p-6 mb-6">
-    <h3 class="font-bold mb-4 text-sm uppercase tracking-widest text-neutral-400">Race Calendar</h3>
+    <h3 class="font-bold mb-1 text-sm uppercase tracking-widest text-neutral-400">Race Calendar</h3>
+    <p class="text-xs text-neutral-600 mb-4">
+      🏙️ Street &nbsp; 🔧 Technical &nbsp; 🌧️ Wet &nbsp; 🏁 Normal
+    </p>
     <div class="grid grid-cols-6 gap-2">
       {{range $i, $r := $s.RaceResults}}
       <div class="rounded-lg p-2 text-center text-xs {{if $r.DNF}}bg-neutral-800 border border-neutral-700{{else if $r.Won}}bg-green-900 border border-green-700{{else}}bg-red-950 border border-red-900{{end}}"
-           title="{{$r.Race}}">
-        <div class="text-neutral-500 text-xs mb-1">R{{add $i 1}}</div>
+           title="{{$r.Race}}{{if $r.Won}} — {{$r.HeroDriver}}{{end}}">
+        <div class="text-neutral-500 text-xs mb-0.5">
+          {{if eq $r.CircuitType "street"}}🏙️{{else if eq $r.CircuitType "technical"}}🔧{{else if eq $r.CircuitType "wet"}}🌧️{{else}}🏁{{end}}
+        </div>
         {{if $r.DNF}}
-        <div class="font-black text-neutral-500">DNF</div>
+        <div class="font-black text-neutral-500 text-xs">DNF</div>
         {{else if $r.Won}}
-        <div class="font-black text-green-400">WIN</div>
+        <div class="font-black text-green-400 text-xs">WIN</div>
         {{else}}
-        <div class="font-black text-red-600">—</div>
+        <div class="font-black text-red-700 text-xs">—</div>
         {{end}}
-        <div class="text-neutral-600 text-xs mt-1">{{$r.Cumulative}}</div>
+        <div class="text-neutral-600 text-xs mt-0.5">{{$r.Cumulative}}</div>
       </div>
       {{end}}
     </div>
-    <!-- Race name legend (visible on hover via title attr, also show below grid) -->
-    <div class="mt-4 grid grid-cols-4 gap-1 text-xs text-neutral-600">
+
+    <!-- Race legend -->
+    <div class="mt-4 grid grid-cols-4 gap-x-4 gap-y-1 text-xs text-neutral-600">
       {{range $i, $r := $s.RaceResults}}
       <div class="truncate">
         <span class="{{if $r.DNF}}text-neutral-500{{else if $r.Won}}text-green-600{{else}}text-red-800{{end}}">R{{add $i 1}}</span>
@@ -60,7 +66,7 @@
     </div>
   </div>
 
-  <!-- Season stats -->
+  <!-- Stats + key wins -->
   <div class="grid grid-cols-2 gap-4 mb-6">
     <div class="bg-neutral-900 rounded-xl p-5">
       <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Season Summary</div>
@@ -77,26 +83,44 @@
           <span class="text-neutral-400">DNFs</span>
           <span class="font-bold text-neutral-500">{{$stats.DNFs}}</span>
         </div>
-      </div>
-    </div>
-    <div class="bg-neutral-900 rounded-xl p-5">
-      <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Records</div>
-      <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
-          <span class="text-neutral-400">Longest win streak</span>
-          <span class="font-bold text-green-400">{{$stats.BestStreak}}</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-neutral-400">First win</span>
-          <span class="font-bold text-white">R{{$stats.FirstWin}}</span>
-        </div>
         <div class="flex justify-between">
           <span class="text-neutral-400">Win rate</span>
           <span class="font-bold text-white">{{$stats.WinPct}}%</span>
         </div>
       </div>
     </div>
+    <div class="bg-neutral-900 rounded-xl p-5">
+      <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Records</div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-neutral-400">Longest streak</span>
+          <span class="font-bold text-green-400">{{$stats.BestStreak}} wins</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-neutral-400">First win</span>
+          <span class="font-bold text-white">{{if gt $stats.FirstWin 0}}R{{$stats.FirstWin}}{{else}}—{{end}}</span>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Key wins with hero drivers -->
+  {{if $stats.KeyWins}}
+  <div class="bg-neutral-900 rounded-xl p-5 mb-6">
+    <div class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Standout Moments</div>
+    <div class="space-y-2">
+      {{range $stats.KeyWins}}
+      <div class="flex items-center gap-3 text-sm">
+        <span class="text-green-400 font-bold w-6 text-right">W</span>
+        <span class="text-neutral-400 flex-1">{{.Race}}</span>
+        {{if .HeroDriver}}
+        <span class="text-neutral-600 text-xs">{{.HeroDriver}} <span class="text-red-900">({{.HeroRole}})</span></span>
+        {{end}}
+      </div>
+      {{end}}
+    </div>
+  </div>
+  {{end}}
   {{end}}
 
   <!-- Share + actions -->

@@ -135,3 +135,61 @@ func chooseEra(remaining []f1.Era, locked *f1.Era) (f1.Era, error) {
 	}
 	return remaining[rand.IntN(len(remaining))], nil
 }
+
+// componentIndex is pre-built at startup: category → eraID → list of components.
+var componentIndex map[string]map[string][]f1.TeamComponent
+
+func init() {
+	componentIndex = map[string]map[string][]f1.TeamComponent{}
+	for _, c := range f1.AllComponents() {
+		if componentIndex[c.Category] == nil {
+			componentIndex[c.Category] = map[string][]f1.TeamComponent{}
+		}
+		componentIndex[c.Category][c.Era] = append(componentIndex[c.Category][c.Era], c)
+	}
+}
+
+// SpinComponent picks a random pair from the given component category.
+// Returns an error if the category has no data.
+func SpinComponent(category string) (f1.ComponentSpin, error) {
+	byEra, ok := componentIndex[category]
+	if !ok || len(byEra) == 0 {
+		return f1.ComponentSpin{}, fmt.Errorf("no components for category %q", category)
+	}
+
+	// Pick a random era that has at least one component in this category.
+	eras := make([]string, 0, len(byEra))
+	for e := range byEra {
+		if len(byEra[e]) > 0 {
+			eras = append(eras, e)
+		}
+	}
+	eraID := eras[rand.IntN(len(eras))]
+	options := byEra[eraID]
+
+	// Find the full Era struct for display.
+	var spinEra f1.Era
+	for _, e := range f1.Eras {
+		if e.ID == eraID {
+			spinEra = e
+			break
+		}
+	}
+
+	spin := f1.ComponentSpin{Category: category, Era: spinEra}
+
+	if len(options) == 1 {
+		spin.OptionA = options[0]
+		spin.OptionB = options[0]
+	} else {
+		// Pick 2 distinct options.
+		i := rand.IntN(len(options))
+		j := rand.IntN(len(options) - 1)
+		if j >= i {
+			j++
+		}
+		spin.OptionA = options[i]
+		spin.OptionB = options[j]
+	}
+	return spin, nil
+}

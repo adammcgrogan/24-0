@@ -2,11 +2,14 @@
 {{$s := .Session}}
 {{$spin := .Spin}}
 <div>
-  <div class="mb-4">
-    <span class="text-xs text-neutral-500 uppercase tracking-wider">{{$spin.Era.Name}}</span>
-    <h3 class="text-xl font-black">{{$spin.Constructor}}
+  <!-- Context: which role this spin is for -->
+  <div class="mb-5 text-center">
+    <span class="text-xs text-neutral-500 uppercase tracking-widest">{{$spin.Era.Name}} · </span>
+    <span class="text-xs bg-red-900 text-red-300 rounded px-2 py-0.5 font-bold">{{$spin.Era.Role}}</span>
+    <h3 class="text-xl font-black mt-2">{{$spin.Constructor}}
       <span class="text-neutral-400 font-normal text-base">'{{mod $spin.Season 100 | printf "%02d"}}</span>
     </h3>
+    <p class="text-xs text-neutral-500 mt-1">{{$spin.Era.RoleDesc}}</p>
   </div>
 
   <div class="grid grid-cols-2 gap-4 mb-6">
@@ -29,11 +32,12 @@
         </div>
         <div class="bg-neutral-900 rounded p-2">
           <div class="text-lg font-black">{{printf "%.0f" $spin.DriverA.Points}}</div>
-          <div class="text-xs text-neutral-500">Points</div>
+          <div class="text-xs text-neutral-500">Pts</div>
         </div>
       </div>
       <div class="mt-2 text-xs text-neutral-500">
-        Pace Score: <span class="text-white font-semibold">{{printf "%.1f" $spin.DriverA.PaceScore}}</span>
+        Pace <span class="text-white font-semibold">{{printf "%.0f" $spin.DriverA.PaceScore}}</span>
+        <span class="text-neutral-700 ml-1">/ 100</span>
       </div>
     </button>
 
@@ -56,16 +60,17 @@
         </div>
         <div class="bg-neutral-900 rounded p-2">
           <div class="text-lg font-black">{{printf "%.0f" $spin.DriverB.Points}}</div>
-          <div class="text-xs text-neutral-500">Points</div>
+          <div class="text-xs text-neutral-500">Pts</div>
         </div>
       </div>
       <div class="mt-2 text-xs text-neutral-500">
-        Pace Score: <span class="text-white font-semibold">{{printf "%.1f" $spin.DriverB.PaceScore}}</span>
+        Pace <span class="text-white font-semibold">{{printf "%.0f" $spin.DriverB.PaceScore}}</span>
+        <span class="text-neutral-700 ml-1">/ 100</span>
       </div>
     </button>
   </div>
 
-  <!-- Skip buttons -->
+  <!-- Reroll constructor only (era already chosen by player) -->
   <div class="flex gap-3 justify-center text-sm">
     {{if gt $s.ConstructorSkipsLeft 0}}
     <button
@@ -74,15 +79,6 @@
       hx-swap="innerHTML"
       class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-4 py-2 rounded-lg transition-colors">
       🔄 Different constructor ({{$s.ConstructorSkipsLeft}} left)
-    </button>
-    {{end}}
-    {{if gt $s.EraSkipsLeft 0}}
-    <button
-      hx-post="/game/{{$s.ID}}/skip/era"
-      hx-target="#spin-area"
-      hx-swap="innerHTML"
-      class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-4 py-2 rounded-lg transition-colors">
-      ⏭️ Different era ({{$s.EraSkipsLeft}} left)
     </button>
     {{end}}
   </div>

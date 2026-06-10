@@ -3,40 +3,83 @@
 {{define "content"}}
 {{$s := .}}
 <div class="max-w-3xl mx-auto">
-  <div class="flex items-center justify-between mb-8">
-    <h2 class="text-2xl font-black">Build Your Team</h2>
-    <div class="flex gap-4 text-sm">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-black">Build Your Team</h2>
+      <p class="text-sm text-neutral-500 mt-1">Draft 5 drivers and 5 team roles to build the ultimate F1 squad.</p>
+    </div>
+    <div class="flex gap-3 text-sm">
       <span class="bg-neutral-800 rounded px-3 py-1">
-        Round <strong>{{len $s.Picks | add 1}}</strong> of 5
+        <strong>{{len $s.Picks}}</strong>/10 drafted
       </span>
       <span class="bg-neutral-800 rounded px-3 py-1 {{if eq $s.ConstructorSkipsLeft 0}}text-neutral-600{{end}}">
-        🔄 Constructor skips: {{$s.ConstructorSkipsLeft}}
-      </span>
-      <span class="bg-neutral-800 rounded px-3 py-1 {{if eq $s.EraSkipsLeft 0}}text-neutral-600{{end}}">
-        ⏭️ Era skips: {{$s.EraSkipsLeft}}
+        🔄 {{$s.ConstructorSkipsLeft}} reroll{{if ne $s.ConstructorSkipsLeft 1}}s{{end}}
       </span>
     </div>
   </div>
 
-  <!-- Driver slots -->
+  <!-- Team lineup -->
   {{template "lineup.html" (map "Session" $s)}}
 
   <!-- Spin area -->
-  <div id="spin-area" class="bg-neutral-900 rounded-xl p-6 text-center">
+  <div id="spin-area">
     {{if $s.PendingSpin}}
-      {{template "spin_result.html" map "Session" $s "Spin" $s.PendingSpin}}
+      {{template "spin_result.html" (map "Session" $s "Spin" $s.PendingSpin)}}
+    {{else if $s.PendingComponentSpin}}
+      {{template "component_spin.html" (map "Session" $s "Spin" $s.PendingComponentSpin)}}
     {{else}}
-    <p class="text-neutral-400 mb-6">Ready to draft your next driver.</p>
-    <button
-      hx-post="/game/{{$s.ID}}/spin"
-      hx-target="#spin-area"
-      hx-swap="innerHTML"
-      hx-indicator="#spin-indicator"
-      class="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-3 rounded-lg transition-colors">
-      SPIN
-    </button>
-    <div id="spin-indicator" class="htmx-indicator mt-4 text-neutral-400 text-sm">
-      Spinning...
+    <!-- Selection cards -->
+    <div>
+      {{if $s.RemainingDriverEras}}
+      <div class="mb-5">
+        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Draft a Driver</p>
+        <div class="grid gap-2">
+          {{range $s.RemainingDriverEras}}
+          <button
+            hx-post="/game/{{$s.ID}}/spin"
+            hx-vals='{"era_id": "{{.ID}}"}'
+            hx-target="#spin-area"
+            hx-swap="innerHTML"
+            hx-indicator="#spin-indicator"
+            class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-red-500 rounded-xl p-4 text-left transition-all group flex items-center gap-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-1">
+                <span class="text-xs text-neutral-500 uppercase tracking-widest">{{.Name}}</span>
+                <span class="text-xs bg-red-900 text-red-300 rounded px-2 py-0.5 font-bold">{{.Role}}</span>
+              </div>
+              <p class="text-sm text-neutral-400">{{.RoleDesc}}</p>
+            </div>
+            <div class="text-neutral-600 group-hover:text-red-400 transition-colors text-2xl">→</div>
+          </button>
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+
+      {{if $s.RemainingComponentCategories}}
+      <div>
+        <p class="text-xs text-neutral-500 uppercase tracking-widest mb-3">Draft a Team Role</p>
+        <div class="grid gap-2">
+          {{range $s.RemainingComponentCategories}}
+          <button
+            hx-post="/game/{{$s.ID}}/spin/component/{{.ID}}"
+            hx-target="#spin-area"
+            hx-swap="innerHTML"
+            hx-indicator="#spin-indicator"
+            class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-blue-500 rounded-xl p-4 text-left transition-all group flex items-center gap-4">
+            <div class="flex-1">
+              <p class="text-base font-bold text-neutral-200 mb-0.5">{{.Name}}</p>
+              <p class="text-sm text-neutral-400">{{.Description}}</p>
+            </div>
+            <div class="text-neutral-600 group-hover:text-blue-400 transition-colors text-2xl">→</div>
+          </button>
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+    </div>
+    <div id="spin-indicator" class="htmx-indicator text-center text-neutral-400 text-sm py-4">
+      Spinning…
     </div>
     {{end}}
   </div>

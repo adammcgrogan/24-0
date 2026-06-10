@@ -49,7 +49,7 @@ func GetSession(ctx context.Context, id string) (*f1.Session, error) {
 	}
 	row := pool.QueryRow(ctx,
 		`SELECT id, picks, constructor_skips_left, era_skips_left,
-		        pending_spin,
+		        pending_spin, pending_component_spin,
 		        COALESCE(wins, 0),
 		        COALESCE(tier, ''),
 		        completed,
@@ -57,12 +57,10 @@ func GetSession(ctx context.Context, id string) (*f1.Session, error) {
 		 FROM sessions WHERE id = $1`, id)
 
 	var s f1.Session
-	var picksJSON []byte
-	var pendingJSON []byte
-	var raceResultsJSON []byte
+	var picksJSON, pendingJSON, pendingComponentJSON, raceResultsJSON []byte
 
 	err := row.Scan(&s.ID, &picksJSON, &s.ConstructorSkipsLeft, &s.EraSkipsLeft,
-		&pendingJSON, &s.Wins, &s.Tier, &s.Completed, &raceResultsJSON)
+		&pendingJSON, &pendingComponentJSON, &s.Wins, &s.Tier, &s.Completed, &raceResultsJSON)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
@@ -81,6 +79,13 @@ func GetSession(ctx context.Context, id string) (*f1.Session, error) {
 			return nil, fmt.Errorf("GetSession: corrupt pending_spin JSON: %w", err)
 		}
 		s.PendingSpin = &spin
+	}
+	if len(pendingComponentJSON) > 0 {
+		var cspin f1.ComponentSpin
+		if err := json.Unmarshal(pendingComponentJSON, &cspin); err != nil {
+			return nil, fmt.Errorf("GetSession: corrupt pending_component_spin JSON: %w", err)
+		}
+		s.PendingComponentSpin = &cspin
 	}
 	if len(raceResultsJSON) > 0 {
 		if err := json.Unmarshal(raceResultsJSON, &s.RaceResults); err != nil {
@@ -158,6 +163,43 @@ func AddPick(ctx context.Context, sessionID string, pick f1.Pick) error {
 	}
 	if tag.RowsAffected() == 0 {
 		return fmt.Errorf("AddPick: session not found or already completed")
+	}
+	return nil
+}
+
+// SaveComponentSpin stores the pending component spin result.
+func SaveComponentSpin(ctx context.Context, sessionID string, spin f1.ComponentSpin) error {
+	if err := checkPool(); err != nil {
+		return err
+	}
+	b, err := json.Marshal(spin)
+	if err != nil {
+		return err
+	}
+	_, err = pool.Exec(ctx,
+		`UPDATE sessions SET pending_component_spin = $1 WHERE id = $2`, b, sessionID)
+	return err
+}
+
+// AddComponentPick atomically appends a component pick and clears pending_component_spin.
+func AddComponentPick(ctx context.Context, sessionID string, pick f1.Pick) error {
+	if err := checkPool(); err != nil {
+		return err
+	}
+	b, err := json.Marshal(pick)
+	if err != nil {
+		return err
+	}
+	tag, err := pool.Exec(ctx,
+		`UPDATE sessions
+		 SET picks = picks || $1::jsonb, pending_component_spin = NULL
+		 WHERE id = $2 AND completed = FALSE`,
+		json.RawMessage("["+string(b)+"]"), sessionID)
+	if err != nil {
+		return fmt.Errorf("AddComponentPick: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("AddComponentPick: session not found or already completed")
 	}
 	return nil
 }

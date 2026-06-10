@@ -33,6 +33,7 @@ func init() {
 			template.New("").Funcs(templateFuncs).ParseFS(templateFS,
 				"templates/base.html",
 				"templates/partials/spin_result.html",
+				"templates/partials/component_spin.html",
 				"templates/partials/slot.html",
 				"templates/partials/lineup.html",
 				"templates/"+page,
@@ -43,6 +44,7 @@ func init() {
 	partialTemplates = template.Must(
 		template.New("").Funcs(templateFuncs).ParseFS(templateFS,
 			"templates/partials/spin_result.html",
+			"templates/partials/component_spin.html",
 			"templates/partials/slot.html",
 			"templates/partials/lineup.html",
 		),

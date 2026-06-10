@@ -15,6 +15,7 @@ type SeasonStats struct {
 	BestStreak int
 	FirstWin   int
 	WinPct     int
+	KeyWins    []f1.RaceResult // up to 5 notable wins to highlight
 }
 
 // ComputeStats derives season statistics from a slice of race results.
@@ -23,7 +24,6 @@ func ComputeStats(races []f1.RaceResult) SeasonStats {
 	if len(races) == 0 {
 		return s
 	}
-	s.Wins = 0
 	s.FirstWin = -1
 	streak := 0
 	for i, r := range races {
@@ -38,6 +38,10 @@ func ComputeStats(races []f1.RaceResult) SeasonStats {
 			}
 			if s.FirstWin == -1 {
 				s.FirstWin = i + 1
+			}
+			// Collect up to 5 key wins — prefer street/technical/wet over normal.
+			if len(s.KeyWins) < 5 && (r.CircuitType != "normal" || len(s.KeyWins) < 3) {
+				s.KeyWins = append(s.KeyWins, r)
 			}
 		} else {
 			s.Losses++
@@ -66,13 +70,42 @@ var templateFuncs = template.FuncMap{
 		}
 		return m
 	},
-	// emptySlots returns a slice of nils to range over for unfilled slots.
+	// emptySlots returns empty structs for unfilled driver slots (legacy helper).
 	"emptySlots": func(picks []f1.Pick) []struct{} {
-		n := 5 - len(picks)
+		drivers := 0
+		for _, p := range picks {
+			if p.Type != "component" {
+				drivers++
+			}
+		}
+		n := 5 - drivers
 		if n < 0 {
 			n = 0
 		}
 		return make([]struct{}, n)
+	},
+	// emptyComponentSlots returns empty structs for unfilled component slots.
+	"emptyComponentSlots": func(picks []f1.Pick) []struct{} {
+		comps := 0
+		for _, p := range picks {
+			if p.Type == "component" {
+				comps++
+			}
+		}
+		n := 5 - comps
+		if n < 0 {
+			n = 0
+		}
+		return make([]struct{}, n)
+	},
+	// categoryName maps a component category ID to its display name.
+	"categoryName": func(catID string) string {
+		for _, c := range f1.ComponentCategories {
+			if c.ID == catID {
+				return c.Name
+			}
+		}
+		return catID
 	},
 	// shortRaceName strips " Grand Prix" to keep the grid compact.
 	"shortRaceName": func(name string) string {
