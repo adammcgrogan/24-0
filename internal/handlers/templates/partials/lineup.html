@@ -6,18 +6,20 @@
   <p class="section-label" style="margin-bottom:.7rem;">Drivers</p>
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1.4rem;">
     {{range $s.DriverPicks}}
-    <div class="lineup-slot driver-slot" style="padding:.85rem 1rem .85rem 1.3rem;">
-      <div class="f-display" style="font-weight:700; font-size:1rem; color:var(--text); line-height:1.2;">{{.Driver.Name}}</div>
-      <div class="f-mono" style="font-size:.65rem; color:var(--text-3); margin-top:.3rem; line-height:1.6;">
+    <div class="lineup-slot driver-slot" style="padding:.85rem 1rem .85rem 1.3rem; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:0; right:0; bottom:0; width:25%; background:linear-gradient(270deg, rgba(225,6,0,.04), transparent); pointer-events:none;"></div>
+      <div class="f-display" style="font-weight:800; font-size:1rem; color:var(--text); line-height:1.2;">{{.Driver.Name}}</div>
+      <div class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-top:.3rem; line-height:1.6;">
         {{.Driver.Constructor}} &apos;{{mod .Driver.Season 100 | printf "%02d"}}
-        <span style="color:var(--text-3); margin-left:.4rem;">·</span>
-        <span style="color:var(--text-2); margin-left:.4rem;">Pace {{printf "%.0f" .Driver.PaceScore}}</span>
+        <span style="color:var(--border-3); margin:0 .3rem;">·</span>
+        <span style="color:var(--text-2);">{{printf "%.0f" .Driver.PaceScore}}</span>
       </div>
     </div>
     {{end}}
     {{range emptySlots $s.Picks}}
-    <div class="empty-slot" style="padding:.85rem 1rem; display:flex; align-items:center; justify-content:center;">
-      <span style="font-size:.8rem; color:var(--text-3);">Empty Driver Seat</span>
+    <div class="empty-slot" style="padding:.85rem 1rem; display:flex; align-items:center; justify-content:center; gap:.4rem;">
+      <span style="font-size:.65rem; color:var(--border-2);">— —</span>
+      <span class="section-label" style="font-size:.6rem;">Driver Seat</span>
     </div>
     {{end}}
   </div>

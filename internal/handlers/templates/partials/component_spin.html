@@ -35,9 +35,10 @@
     </div>
 
     <!-- Score hero -->
-    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.9rem; text-align:center; margin-bottom:.9rem;">
-      <div class="f-mono" style="font-size:2rem; font-weight:700; color:var(--text); line-height:1;">{{printf "%.0f" $spin.OptionA.Score}}</div>
-      <div style="font-size:.6rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.1em; text-transform:uppercase;">Score / 100</div>
+    <div style="background:var(--surf); border:1px solid var(--border); border-top:2px solid var(--blue); border-radius:2px; padding:.9rem; text-align:center; margin-bottom:.9rem; position:relative; overflow:hidden;">
+      <div style="position:absolute; inset:0; background:radial-gradient(ellipse 60% 60% at 50% 110%, rgba(59,130,246,.06), transparent); pointer-events:none;"></div>
+      <div class="f-mono" style="font-size:2.1rem; font-weight:700; color:var(--text); line-height:1; position:relative;">{{printf "%.0f" $spin.OptionA.Score}}</div>
+      <div style="font-size:.58rem; color:var(--text-3); margin-top:.25rem; letter-spacing:.12em; text-transform:uppercase; position:relative;">Score / 100</div>
     </div>
 
     {{if $spin.OptionA.Specialty}}
@@ -74,9 +75,10 @@
     </div>
 
     <!-- Score hero -->
-    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.9rem; text-align:center; margin-bottom:.9rem;">
-      <div class="f-mono" style="font-size:2rem; font-weight:700; color:var(--text); line-height:1;">{{printf "%.0f" $spin.OptionB.Score}}</div>
-      <div style="font-size:.6rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.1em; text-transform:uppercase;">Score / 100</div>
+    <div style="background:var(--surf); border:1px solid var(--border); border-top:2px solid var(--blue); border-radius:2px; padding:.9rem; text-align:center; margin-bottom:.9rem; position:relative; overflow:hidden;">
+      <div style="position:absolute; inset:0; background:radial-gradient(ellipse 60% 60% at 50% 110%, rgba(59,130,246,.06), transparent); pointer-events:none;"></div>
+      <div class="f-mono" style="font-size:2.1rem; font-weight:700; color:var(--text); line-height:1; position:relative;">{{printf "%.0f" $spin.OptionB.Score}}</div>
+      <div style="font-size:.58rem; color:var(--text-3); margin-top:.25rem; letter-spacing:.12em; text-transform:uppercase; position:relative;">Score / 100</div>
     </div>
 
     {{if $spin.OptionB.Specialty}}

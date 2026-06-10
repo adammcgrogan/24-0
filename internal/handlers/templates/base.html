@@ -28,6 +28,12 @@
       --text-3:    #676767;
       --blue:      #3b82f6;
       --blue-dim:  rgba(59,130,246,0.14);
+      --gold:      #f59e0b;
+      --gold-dim:  rgba(245,158,11,0.12);
+      --teal:      #14b8a6;
+      --purple:    #a78bfa;
+      --surf-4:    #3a3a3a;
+      --red-mid:   rgba(225,6,0,0.22);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -69,10 +75,10 @@
     }
 
     /* ── Tier colours (preserve exact game logic) */
-    .tier-perfect      { color: #f59e0b; text-shadow: 0 0 40px rgba(245,158,11,.55); }
-    .tier-near-perfect { color: #a78bfa; text-shadow: 0 0 30px rgba(167,139,250,.45); }
-    .tier-dominant     { color: #34d399; text-shadow: 0 0 30px rgba(52,211,153,.4);  }
-    .tier-contender    { color: #60a5fa; text-shadow: 0 0 24px rgba(96,165,250,.4);  }
+    .tier-perfect      { color: #f59e0b; text-shadow: 0 0 48px rgba(245,158,11,.6), 0 0 12px rgba(245,158,11,.3); }
+    .tier-near-perfect { color: #a78bfa; text-shadow: 0 0 36px rgba(167,139,250,.5), 0 0 10px rgba(167,139,250,.25); }
+    .tier-dominant     { color: #34d399; text-shadow: 0 0 32px rgba(52,211,153,.45), 0 0 10px rgba(52,211,153,.2); }
+    .tier-contender    { color: #60a5fa; text-shadow: 0 0 28px rgba(96,165,250,.45), 0 0 8px rgba(96,165,250,.2); }
     .tier-winner       { color: #94a3b8; }
     .tier-points       { color: #6b7280; }
     .tier-backmarker   { color: #4b5563; }
@@ -83,8 +89,12 @@
       to   { opacity:1; transform: translateY(0); }
     }
     @keyframes launchPulse {
-      0%,100% { box-shadow: 0 0 0 0 var(--red-glow); }
-      55%     { box-shadow: 0 0 0 18px rgba(225,6,0,0); }
+      0%,100% { box-shadow: 0 0 0 0 var(--red-glow), 0 4px 22px rgba(225,6,0,.22); }
+      55%     { box-shadow: 0 0 0 16px rgba(225,6,0,0), 0 4px 22px rgba(225,6,0,.22); }
+    }
+    @keyframes shimmer {
+      0%   { left: -100%; }
+      100% { left: 160%; }
     }
     @keyframes spinWheel { to { transform: rotate(360deg); } }
     @keyframes slotReveal {
@@ -164,12 +174,26 @@
       animation: launchPulse 2.8s ease-in-out infinite;
       display: inline-block;
       text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-launch::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -100%;
+      width: 50%; height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+      transform: skewX(-18deg);
+      pointer-events: none;
     }
     .btn-launch:hover {
-      background: #ff1800;
+      background: #ff1a00;
       transform: scale(1.05);
       animation: none;
-      box-shadow: 0 0 50px rgba(225,6,0,.55), 0 4px 20px rgba(225,6,0,.3);
+      box-shadow: 0 0 56px rgba(225,6,0,.6), 0 4px 24px rgba(225,6,0,.35);
+    }
+    .btn-launch:hover::after {
+      animation: shimmer .55s ease forwards;
     }
     .btn-launch:active { transform: scale(.97); }
 
@@ -185,13 +209,14 @@
       border: 1px solid var(--border-2);
       cursor: pointer;
       padding: .6rem 1.4rem;
-      transition: all .18s;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
       clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
     }
     .btn-secondary:hover {
       color: var(--text);
       border-color: var(--border-3);
       background: var(--surf-3);
+      box-shadow: 0 4px 16px rgba(0,0,0,.25);
     }
 
     /* ── Pick cards ───────────────────────────── */
@@ -202,16 +227,24 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: transform .2s cubic-bezier(.16,1,.3,1), border-color .18s, box-shadow .2s;
+      transition: transform .22s cubic-bezier(.16,1,.3,1), border-color .18s, box-shadow .22s;
     }
     .pick-card::before {
       content:'';
       position:absolute; inset:0;
-      background: linear-gradient(135deg, rgba(225,6,0,.07) 0%, transparent 55%);
-      opacity:0; transition:opacity .2s;
+      background: linear-gradient(145deg, rgba(225,6,0,.09) 0%, transparent 50%);
+      opacity:0; transition:opacity .22s;
     }
-    .pick-card:hover { transform: translateY(-3px); border-color: var(--red); box-shadow: 0 12px 40px rgba(225,6,0,.25), 0 0 0 1px rgba(225,6,0,.3); }
+    .pick-card::after {
+      content:'';
+      position:absolute; top:0; left:0; right:0;
+      height:2px;
+      background: linear-gradient(90deg, var(--red), rgba(225,6,0,.3));
+      opacity:0; transition:opacity .22s;
+    }
+    .pick-card:hover { transform: translateY(-4px) scale(1.005); border-color: rgba(225,6,0,.65); box-shadow: 0 16px 48px rgba(225,6,0,.28), 0 0 0 1px rgba(225,6,0,.3), inset 0 1px 0 rgba(225,6,0,.1); }
     .pick-card:hover::before { opacity:1; }
+    .pick-card:hover::after  { opacity:1; }
 
     /* ── Component pick cards ─────────────────── */
     .comp-card {
@@ -219,21 +252,32 @@
       border: 1px solid var(--border-2);
       border-radius: 2px;
       cursor: pointer;
-      transition: all .2s cubic-bezier(.16,1,.3,1);
+      transition: all .22s cubic-bezier(.16,1,.3,1);
+      position: relative;
+      overflow: hidden;
     }
-    .comp-card:hover { border-color: var(--blue); background: var(--surf-3); transform: translateX(6px); box-shadow: -6px 0 24px var(--blue-dim); }
+    .comp-card::after {
+      content:'';
+      position:absolute; top:0; left:0; bottom:0;
+      width:2px;
+      background: var(--blue);
+      opacity:0; transition:opacity .2s;
+    }
+    .comp-card:hover { border-color: rgba(59,130,246,.6); background: var(--surf-3); transform: translateX(5px); box-shadow: -5px 0 28px var(--blue-dim), inset 0 1px 0 rgba(59,130,246,.08); }
+    .comp-card:hover::after { opacity:1; }
 
     /* ── Role list buttons ────────────────────── */
     .role-btn {
       background: var(--surf-2);
       border: 1px solid var(--border-2);
+      border-left: 2px solid transparent;
       border-radius: 2px;
       cursor: pointer;
-      transition: all .2s;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
       width: 100%;
       text-align: left;
     }
-    .role-btn:hover { border-color: var(--blue); background: var(--surf-3); transform: translateX(4px); box-shadow: -4px 0 16px var(--blue-dim); }
+    .role-btn:hover { border-color: rgba(59,130,246,.5); border-left-color: var(--blue); background: var(--surf-3); transform: translateX(5px); box-shadow: -4px 0 20px var(--blue-dim); }
 
     /* ── Filled driver/component lineup slots ─── */
     .lineup-slot {
@@ -271,7 +315,20 @@
     }
 
     /* ── Stat box ─────────────────────────────── */
-    .stat-box { background: var(--surf); border: 1px solid var(--border); border-radius:2px; }
+    .stat-box {
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-2), transparent 70%);
+    }
 
     /* ── Race timeline ────────────────────────── */
     .timeline-track {
@@ -304,12 +361,12 @@
       background: var(--surf-3);
       border: 1.5px solid var(--border-2);
       z-index: 1;
-      transition: background .25s, border-color .25s, box-shadow .3s;
+      transition: background .25s, border-color .25s, box-shadow .3s, transform .25s cubic-bezier(.34,1.56,.64,1);
       flex-shrink: 0;
     }
-    .race-dot.win  { background:#34d399; border-color:#22c55e; box-shadow:0 0 10px rgba(52,211,153,.55); }
-    .race-dot.loss { background:rgba(225,6,0,.45); border-color:rgba(225,6,0,.7); box-shadow:0 0 6px rgba(225,6,0,.3); }
-    .race-dot.dnf  { background:var(--border-2); border-color:var(--border-3); }
+    .race-dot.win  { background:#34d399; border-color:#22c55e; box-shadow:0 0 12px rgba(52,211,153,.65); transform:scale(1.2); }
+    .race-dot.loss { background:rgba(225,6,0,.55); border-color:rgba(225,6,0,.8); box-shadow:0 0 8px rgba(225,6,0,.45); }
+    .race-dot.dnf  { background:var(--surf-4); border-color:var(--border-3); }
     .race-badge {
       font-family:'Barlow Condensed',sans-serif;
       font-weight:800; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
@@ -338,12 +395,28 @@
     .lb-row {
       background: var(--surf);
       border: 1px solid var(--border);
-      border-radius:2px;
-      transition: all .18s;
-      display:flex; align-items:center; gap:1rem;
-      text-decoration:none; color:inherit;
+      border-radius: 2px;
+      border-left: 2px solid transparent;
+      transition: all .2s cubic-bezier(.16,1,.3,1);
+      display: flex; align-items: center; gap: 1rem;
+      text-decoration: none; color: inherit;
+      position: relative;
+      overflow: hidden;
     }
-    .lb-row:hover { background: var(--surf-2); border-color: var(--border-3); transform: translateX(5px); }
+    .lb-row::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,.025) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    .lb-row:hover { background: var(--surf-2); border-color: var(--border-3); border-left-color: var(--border-3); transform: translateX(4px); box-shadow: -4px 0 20px rgba(0,0,0,.2); }
+    .lb-row:hover::before { opacity: 1; }
+    .lb-row.rank-1 { border-left-color: #f59e0b; background: rgba(245,158,11,.03); }
+    .lb-row.rank-2 { border-left-color: #9ca3af; }
+    .lb-row.rank-3 { border-left-color: #b45309; }
 
     /* ── HTMX loading indicator ───────────────── */
     .htmx-indicator { display:none; }
@@ -511,9 +584,36 @@
     ::-webkit-scrollbar-thumb:hover { background:var(--red); }
 
     /* ── Progress pips ────────────────────────── */
-    .pip { width:7px; height:7px; border-radius:50%; background:var(--border-2); transition:background .3s; flex-shrink:0; }
-    .pip.done { background:var(--red); }
-    .pip.next { background:var(--red); box-shadow:0 0 8px var(--red); animation:launchPulse 1.2s ease-in-out infinite; }
+    .pip { width:7px; height:7px; border-radius:50%; background:var(--border-2); transition:background .3s, box-shadow .3s, transform .3s cubic-bezier(.34,1.56,.64,1); flex-shrink:0; }
+    .pip.done { background:var(--red); transform:scale(1.15); }
+    .pip.next { background:var(--red); box-shadow:0 0 10px var(--red); animation:launchPulse 1.2s ease-in-out infinite; transform:scale(1.25); }
+
+    /* ── Nav link (replaces inline hover handlers) */
+    .nav-link {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: .85rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-2);
+      position: relative;
+      padding-bottom: 2px;
+      transition: color .15s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0;
+      width: 0; height: 1px;
+      background: var(--red);
+      transition: width .22s cubic-bezier(.16,1,.3,1);
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.dim { color: var(--text-3); }
+    .nav-link.dim:hover { color: var(--text-2); }
+    .nav-link.dim::after { background: var(--border-3); }
   </style>
 </head>
 <body>
@@ -528,11 +628,8 @@
         <span class="f-mono" style="font-size:.62rem; color:var(--text-3); margin-left:.35rem;">.win</span>
       </a>
       <div class="flex items-center gap-7">
-        <a href="/leaderboard" class="f-display font-semibold uppercase tracking-wider" style="font-size:.85rem; color:var(--text-2); text-decoration:none; transition:color .15s; letter-spacing:.1em;"
-           onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-2)'">Leaderboard</a>
-        <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener"
-           class="f-display font-semibold uppercase tracking-wider" style="font-size:.85rem; color:var(--text-3); text-decoration:none; transition:color .15s;"
-           onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">Support ☕</a>
+        <a href="/leaderboard" class="nav-link">Leaderboard</a>
+        <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener" class="nav-link dim">Support ☕</a>
       </div>
     </div>
   </nav>
@@ -541,10 +638,13 @@
     {{block "content" .}}{{end}}
   </main>
 
-  <footer style="border-top:1px solid var(--border); padding:1.4rem 1.5rem; margin-top:auto;">
+  <footer style="border-top:1px solid var(--border); padding:1.4rem 1.5rem; margin-top:auto; position:relative;">
+    <div style="position:absolute; top:-1px; left:0; right:0; height:3px;
+      background-image:repeating-conic-gradient(rgba(255,255,255,.055) 0% 25%, transparent 0% 50%);
+      background-size:6px 6px;"></div>
     <p class="f-mono text-center" style="font-size:.62rem; color:var(--text-3); line-height:1.7;">
-      Open source on <a href="https://github.com/adammcgrogan/24-0" style="color:inherit; text-decoration:underline; text-underline-offset:2px; transition:color .15s;" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">GitHub</a>.
-      &nbsp;F1 data via <a href="https://jolpica.com" style="color:inherit; text-decoration:underline; text-underline-offset:2px; transition:color .15s;" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">Jolpica</a>.
+      Open source on <a href="https://github.com/adammcgrogan/24-0" class="nav-link dim" style="font-family:'Space Mono',monospace; font-size:inherit;">GitHub</a>.
+      &nbsp;F1 data via <a href="https://jolpica.com" class="nav-link dim" style="font-family:'Space Mono',monospace; font-size:inherit;">Jolpica</a>.
       &nbsp;Not affiliated with Formula 1 or the FIA.
     </p>
   </footer>

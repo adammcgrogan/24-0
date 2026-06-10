@@ -10,20 +10,26 @@
   <!-- ══════════════════════════════════════════
        SCORE STRIP — always visible at top
   ══════════════════════════════════════════ -->
-  <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.2rem; flex-wrap:wrap;">
-    <div id="race-counter">RACE 0 / 24</div>
+  <div style="display:flex; align-items:center; gap:1.8rem; margin-bottom:1.2rem; flex-wrap:wrap; padding:.9rem 1.1rem;
+    background:var(--surf); border:1px solid var(--border); border-radius:2px; position:relative; overflow:hidden;">
+    <div style="position:absolute; top:0; left:0; bottom:0; width:3px; background:var(--red);"></div>
+    <div style="padding-left:.2rem;">
+      <div id="race-counter" style="margin-bottom:.2rem;">RACE 0 / 24</div>
+      <div style="font-family:'Space Mono',monospace; font-size:.55rem; color:var(--text-3); letter-spacing:.12em; text-transform:uppercase;">Season In Progress</div>
+    </div>
     <div id="score-hero"
          class="f-display"
-         style="font-weight:900; font-size:2.8rem; line-height:1; letter-spacing:-.02em;">
-      <span id="live-wins">0</span><span style="color:var(--red); font-size:.8em; margin:0 .1em;">–</span><span id="live-losses">0</span>
+         style="font-weight:900; font-size:3.2rem; line-height:1; letter-spacing:-.02em;">
+      <span id="live-wins" style="color:var(--text);">0</span><span style="color:var(--red); font-size:.7em; margin:0 .1em;">–</span><span id="live-losses" style="color:var(--text-2);">0</span>
     </div>
+    <div style="width:1px; height:40px; background:var(--border-2); flex-shrink:0;"></div>
     <!-- Tier: fades in after reveal complete -->
     <div id="tier-display">
       <div class="f-display {{$tier.Class}}"
-           style="font-weight:800; font-size:1.1rem; letter-spacing:.06em; text-transform:uppercase; line-height:1.1;">
+           style="font-weight:800; font-size:1.15rem; letter-spacing:.06em; text-transform:uppercase; line-height:1.1;">
         {{$tier.Name}}
       </div>
-      <p id="tier-desc" style="font-size:.75rem; color:var(--text-3); margin-top:.15rem; line-height:1.4; max-width:260px;">{{$tier.Description}}</p>
+      <p id="tier-desc" style="font-size:.75rem; color:var(--text-3); margin-top:.2rem; line-height:1.4; max-width:260px;">{{$tier.Description}}</p>
     </div>
   </div>
 
@@ -218,24 +224,25 @@
 
     <!-- ── Squad sidebar ───────────────────────── -->
     <div style="position:sticky; top:5.5rem;">
-      <p class="section-label" style="margin-bottom:.7rem;">Squad</p>
+      <p class="section-label" style="margin-bottom:.7rem;">Your Squad</p>
       <div style="display:flex; flex-direction:column; gap:.4rem;">
         {{range $s.DriverPicks}}
-        <div style="padding:.65rem .8rem; background:var(--surf-2); border:1px solid var(--border-2); border-left:3px solid var(--red); border-radius:2px;">
-          <div class="f-display" style="font-weight:800; font-size:.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{.Driver.Name}}</div>
-          <div class="f-mono" style="font-size:.56rem; color:var(--text-3); margin-top:.1rem;">{{.Driver.Constructor}} &apos;{{mod .Driver.Season 100 | printf "%02d"}}</div>
-          <div style="display:flex; align-items:center; gap:.4rem; margin-top:.4rem;">
-            <div style="flex:1; height:2px; background:var(--border); border-radius:1px; overflow:hidden;">
-              <div style="height:100%; width:{{printf "%.0f" .Driver.PaceScore}}%; background:var(--red);"></div>
+        <div style="padding:.75rem .9rem .75rem 1.1rem; background:var(--surf-2); border:1px solid var(--border-2); border-left:3px solid var(--red); border-radius:2px; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:0; right:0; bottom:0; width:30%; background:linear-gradient(270deg, rgba(225,6,0,.04), transparent); pointer-events:none;"></div>
+          <div class="f-display" style="font-weight:800; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.2;">{{.Driver.Name}}</div>
+          <div class="f-mono" style="font-size:.58rem; color:var(--text-3); margin-top:.15rem; letter-spacing:.04em;">{{.Driver.Constructor}} &apos;{{mod .Driver.Season 100 | printf "%02d"}}</div>
+          <div style="display:flex; align-items:center; gap:.45rem; margin-top:.5rem;">
+            <div style="flex:1; height:3px; background:var(--surf); border:1px solid var(--border); border-radius:1px; overflow:hidden;">
+              <div style="height:100%; width:{{printf "%.0f" .Driver.PaceScore}}%; background:linear-gradient(90deg, var(--red), #ff4422); border-radius:1px;"></div>
             </div>
-            <span class="f-mono" style="font-size:.6rem; color:var(--text-2); font-weight:700;">{{printf "%.0f" .Driver.PaceScore}}</span>
+            <span class="f-mono" style="font-size:.62rem; color:var(--text-2); font-weight:700; min-width:1.8rem; text-align:right;">{{printf "%.0f" .Driver.PaceScore}}</span>
           </div>
         </div>
         {{end}}
-        <div style="height:.3rem;"></div>
+        <div style="height:.2rem;"></div>
         {{range $s.ComponentPicks}}
-        <div style="padding:.5rem .7rem; background:var(--surf); border:1px solid var(--border); border-left:2px solid var(--blue); border-radius:2px;">
-          <div style="font-size:.62rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); margin-bottom:.15rem;">{{categoryName .Component.Category}}</div>
+        <div style="padding:.5rem .7rem .5rem .85rem; background:var(--surf); border:1px solid var(--border); border-left:2px solid var(--blue); border-radius:2px;">
+          <div style="font-size:.58rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--blue); margin-bottom:.18rem;">{{categoryName .Component.Category}}</div>
           <div style="font-size:.75rem; font-weight:600; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{.Component.Name}}</div>
         </div>
         {{end}}
@@ -253,37 +260,37 @@
 
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:.6rem; margin-bottom:1.2rem;">
 
-      <div class="stat-box" style="padding:1.2rem;">
-        <p class="section-label" style="margin-bottom:.8rem;">Results</p>
-        <div style="display:flex; flex-direction:column; gap:.4rem;">
-          <div style="display:flex; justify-content:space-between; font-size:.82rem;">
+      <div class="stat-box" style="padding:1.2rem; border-top:2px solid #34d399;">
+        <p class="section-label" style="margin-bottom:.9rem;">Results</p>
+        <div style="display:flex; flex-direction:column; gap:.45rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
             <span style="color:var(--text-2);">Wins</span>
-            <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.Wins}}</span>
+            <span class="f-mono" style="font-weight:700; color:#34d399; font-size:.9rem;">{{$stats.Wins}}</span>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:.82rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
             <span style="color:var(--text-2);">Losses</span>
-            <span class="f-mono" style="font-weight:700; color:var(--red);">{{$stats.Losses}}</span>
+            <span class="f-mono" style="font-weight:700; color:var(--red); font-size:.9rem;">{{$stats.Losses}}</span>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:.82rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
             <span style="color:var(--text-2);">DNFs</span>
             <span class="f-mono" style="font-weight:700; color:var(--text-3);">{{$stats.DNFs}}</span>
           </div>
-          <div style="height:1px; background:var(--border); margin:.1rem 0;"></div>
-          <div style="display:flex; justify-content:space-between; font-size:.82rem;">
+          <div style="height:1px; background:var(--border); margin:.2rem 0;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
             <span style="color:var(--text-2);">Win rate</span>
-            <span class="f-mono" style="font-weight:700; color:var(--text);">{{$stats.WinPct}}%</span>
+            <span class="f-mono" style="font-weight:700; color:var(--text); font-size:.9rem;">{{$stats.WinPct}}%</span>
           </div>
         </div>
       </div>
 
-      <div class="stat-box" style="padding:1.2rem;">
-        <p class="section-label" style="margin-bottom:.8rem;">Records</p>
-        <div style="display:flex; flex-direction:column; gap:.4rem;">
-          <div style="display:flex; justify-content:space-between; font-size:.82rem;">
+      <div class="stat-box" style="padding:1.2rem; border-top:2px solid var(--blue);">
+        <p class="section-label" style="margin-bottom:.9rem;">Records</p>
+        <div style="display:flex; flex-direction:column; gap:.45rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
             <span style="color:var(--text-2);">Best streak</span>
-            <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.BestStreak}}</span>
+            <span class="f-mono" style="font-weight:700; color:#34d399; font-size:.9rem;">{{$stats.BestStreak}}</span>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:.82rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
             <span style="color:var(--text-2);">First win</span>
             <span class="f-mono" style="font-weight:700; color:var(--text);">{{if gt $stats.FirstWin 0}}R{{$stats.FirstWin}}{{else}}—{{end}}</span>
           </div>
@@ -291,11 +298,11 @@
       </div>
 
       {{if $stats.KeyWins}}
-      <div class="stat-box" style="padding:1.2rem;">
-        <p class="section-label" style="margin-bottom:.8rem;">Standouts</p>
-        <div style="display:flex; flex-direction:column; gap:.35rem;">
+      <div class="stat-box" style="padding:1.2rem; border-top:2px solid var(--gold);">
+        <p class="section-label" style="margin-bottom:.9rem;">Standouts</p>
+        <div style="display:flex; flex-direction:column; gap:.4rem;">
           {{range $stats.KeyWins}}
-          <div style="display:flex; align-items:center; gap:.45rem; font-size:.75rem; overflow:hidden;">
+          <div style="display:flex; align-items:center; gap:.5rem; font-size:.75rem; overflow:hidden;">
             <span style="font-size:.62rem; flex-shrink:0;">{{if eq .CircuitType "street"}}🏙️{{else if eq .CircuitType "technical"}}🔧{{else if eq .CircuitType "wet"}}🌧️{{else}}🏁{{end}}</span>
             <span style="color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{shortRaceName .Race}}</span>
           </div>
