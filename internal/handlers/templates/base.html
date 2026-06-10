@@ -273,8 +273,66 @@
     /* ── Stat box ─────────────────────────────── */
     .stat-box { background: var(--surf); border: 1px solid var(--border); border-radius:2px; }
 
-    /* ── Race cells ───────────────────────────── */
-    .race-cell { animation: cellPop .28s cubic-bezier(.16,1,.3,1) both; border-radius:2px; }
+    /* ── Race timeline ────────────────────────── */
+    .timeline-track {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      left: .55rem; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent 0%, var(--border) 4%, var(--border) 96%, transparent 100%);
+    }
+    .race-entry {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: .5rem 0;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: opacity .22s ease, transform .22s cubic-bezier(.16,1,.3,1);
+    }
+    .race-entry.revealed { opacity: 1; transform: translateX(0); }
+    .race-dot {
+      position: absolute;
+      left: -1.3rem;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: var(--surf-3);
+      border: 1.5px solid var(--border-2);
+      z-index: 1;
+      transition: background .25s, border-color .25s, box-shadow .3s;
+      flex-shrink: 0;
+    }
+    .race-dot.win  { background:#34d399; border-color:#22c55e; box-shadow:0 0 10px rgba(52,211,153,.55); }
+    .race-dot.loss { background:rgba(225,6,0,.45); border-color:rgba(225,6,0,.7); box-shadow:0 0 6px rgba(225,6,0,.3); }
+    .race-dot.dnf  { background:var(--border-2); border-color:var(--border-3); }
+    .race-badge {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:800; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+      padding:.16rem .45rem; border-radius:2px; flex-shrink:0; margin-left:auto;
+    }
+    .race-badge.win  { background:rgba(52,211,153,.12); color:#34d399; border:1px solid rgba(52,211,153,.3); }
+    .race-badge.loss { background:rgba(225,6,0,.1); color:var(--red); border:1px solid rgba(225,6,0,.25); }
+    .race-badge.dnf  { background:var(--surf-3); color:var(--text-3); border:1px solid var(--border-2); }
+    .month-label {
+      font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:.22em;
+      text-transform:uppercase; color:var(--text-3);
+      padding:.9rem 0 .35rem; border-bottom:1px solid var(--border); margin-bottom:.2rem;
+    }
+    .season-break {
+      display:flex; align-items:center; gap:.7rem;
+      padding:.65rem 0;
+      font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--text-3);
+    }
+    .season-break::before, .season-break::after {
+      content:''; flex:1; height:1px;
+      background:repeating-linear-gradient(90deg, var(--border-2) 0, var(--border-2) 3px, transparent 3px, transparent 7px);
+    }
 
     /* ── Leaderboard rows ─────────────────────── */
     .lb-row {
@@ -297,6 +355,11 @@
     .anim-slide-left  { animation: slideLeft   .38s cubic-bezier(.16,1,.3,1) .08s both; }
     .anim-slide-right { animation: slideRight  .38s cubic-bezier(.16,1,.3,1) .18s both; }
     .anim-slide-up    { animation: slideUp     .3s  cubic-bezier(.16,1,.3,1) both; }
+
+    /* ── Result page progressive reveal ──────── */
+    #tier-display { opacity:0; transform:translateY(6px); transition:opacity .6s ease, transform .6s cubic-bezier(.16,1,.3,1); }
+    #tier-desc    { opacity:0; transition:opacity .5s ease .15s; }
+    #race-counter { font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; color:var(--text-3); margin-bottom:.5rem; }
 
     /* ── Stagger helpers ──────────────────────── */
     .d1{animation-delay:.06s} .d2{animation-delay:.12s} .d3{animation-delay:.18s}
