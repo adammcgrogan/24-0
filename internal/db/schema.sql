@@ -7,8 +7,19 @@ CREATE TABLE IF NOT EXISTS sessions (
     wins                    INT,
     tier                    VARCHAR(80),
     completed               BOOLEAN      NOT NULL DEFAULT FALSE,
+    race_results            JSONB,
     created_at              TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
+
+-- Migration for existing deployments: add race_results if it doesn't exist yet.
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name='sessions' AND column_name='race_results'
+    ) THEN
+        ALTER TABLE sessions ADD COLUMN race_results JSONB;
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS leaderboard (
     id          SERIAL       PRIMARY KEY,

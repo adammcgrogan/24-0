@@ -46,16 +46,25 @@ type Pick struct {
 	Era    Era    `json:"era"`
 }
 
+// RaceResult records the outcome of one race in the simulated season.
+type RaceResult struct {
+	Race       string `json:"race"`
+	Won        bool   `json:"won"`
+	DNF        bool   `json:"dnf"`
+	Cumulative int    `json:"cumulative"`
+}
+
 // Session holds the in-progress or completed game state.
 type Session struct {
-	ID                   string  `json:"id"`
-	Picks                []Pick  `json:"picks"`                  // filled as player drafts
-	PendingSpin          *SpinResult `json:"pending_spin,omitempty"` // awaiting a pick
-	ConstructorSkipsLeft int     `json:"constructor_skips_left"` // starts at 1
-	EraSkipsLeft         int     `json:"era_skips_left"`         // starts at 1
-	Wins                 int     `json:"wins"`
-	Tier                 string  `json:"tier"`
-	Completed            bool    `json:"completed"`
+	ID                   string       `json:"id"`
+	Picks                []Pick       `json:"picks"`
+	PendingSpin          *SpinResult  `json:"pending_spin,omitempty"`
+	ConstructorSkipsLeft int          `json:"constructor_skips_left"`
+	EraSkipsLeft         int          `json:"era_skips_left"`
+	Wins                 int          `json:"wins"`
+	Tier                 string       `json:"tier"`
+	Completed            bool         `json:"completed"`
+	RaceResults          []RaceResult `json:"race_results,omitempty"`
 }
 
 // RemainingEras returns the eras that haven't been picked yet.

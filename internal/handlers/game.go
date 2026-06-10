@@ -205,10 +205,10 @@ func Pick(w http.ResponseWriter, r *http.Request) {
 			lineup[i] = p.Driver
 		}
 
-		wins := game.Simulate(lineup, game.CachedFieldAverage)
-		tier := game.TierForWins(wins).Name
+		result := game.SimulateSeason(lineup, game.CachedFieldAverage)
+		tier := game.TierForWins(result.Wins).Name
 
-		if err := db.Complete(r.Context(), id, wins, tier); err != nil {
+		if err := db.Complete(r.Context(), id, result.Wins, tier, result.Races); err != nil {
 			log.Printf("Complete error for session %s: %v", id, err)
 			http.Error(w, "simulation failed", http.StatusInternalServerError)
 			return

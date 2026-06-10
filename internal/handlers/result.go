@@ -25,9 +25,11 @@ func ResultPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tier := game.TierForWins(s.Wins)
+	stats := ComputeStats(s.RaceResults)
 	renderTemplate(w, "result.html", map[string]any{
 		"Session": s,
 		"Tier":    tier,
+		"Stats":   stats,
 	})
 }
 

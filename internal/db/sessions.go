@@ -52,15 +52,17 @@ func GetSession(ctx context.Context, id string) (*f1.Session, error) {
 		        pending_spin,
 		        COALESCE(wins, 0),
 		        COALESCE(tier, ''),
-		        completed
+		        completed,
+		        race_results
 		 FROM sessions WHERE id = $1`, id)
 
 	var s f1.Session
 	var picksJSON []byte
 	var pendingJSON []byte
+	var raceResultsJSON []byte
 
 	err := row.Scan(&s.ID, &picksJSON, &s.ConstructorSkipsLeft, &s.EraSkipsLeft,
-		&pendingJSON, &s.Wins, &s.Tier, &s.Completed)
+		&pendingJSON, &s.Wins, &s.Tier, &s.Completed, &raceResultsJSON)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
@@ -79,6 +81,11 @@ func GetSession(ctx context.Context, id string) (*f1.Session, error) {
 			return nil, fmt.Errorf("GetSession: corrupt pending_spin JSON: %w", err)
 		}
 		s.PendingSpin = &spin
+	}
+	if len(raceResultsJSON) > 0 {
+		if err := json.Unmarshal(raceResultsJSON, &s.RaceResults); err != nil {
+			return nil, fmt.Errorf("GetSession: corrupt race_results JSON: %w", err)
+		}
 	}
 	return &s, nil
 }
@@ -156,12 +163,16 @@ func AddPick(ctx context.Context, sessionID string, pick f1.Pick) error {
 }
 
 // Complete marks the session as done and records its result.
-func Complete(ctx context.Context, sessionID string, wins int, tier string) error {
+func Complete(ctx context.Context, sessionID string, wins int, tier string, races []f1.RaceResult) error {
 	if err := checkPool(); err != nil {
 		return err
 	}
-	_, err := pool.Exec(ctx,
-		`UPDATE sessions SET completed = TRUE, wins = $1, tier = $2, pending_spin = NULL
-		 WHERE id = $3`, wins, tier, sessionID)
+	racesJSON, err := json.Marshal(races)
+	if err != nil {
+		return fmt.Errorf("Complete: marshal races: %w", err)
+	}
+	_, err = pool.Exec(ctx,
+		`UPDATE sessions SET completed = TRUE, wins = $1, tier = $2, pending_spin = NULL, race_results = $3
+		 WHERE id = $4`, wins, tier, racesJSON, sessionID)
 	return err
 }
