@@ -1,0 +1,6 @@
+.env
+.env.local
+.vercel/
+*.test
+/tmp/
+__debug_bin*

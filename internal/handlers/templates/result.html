@@ -1,0 +1,60 @@
+{{template "base" .}}
+
+{{define "content"}}
+{{$s := .Session}}
+{{$tier := .Tier}}
+<div class="max-w-2xl mx-auto text-center py-8">
+
+  <p class="text-sm text-neutral-500 uppercase tracking-widest mb-2">Your season result</p>
+  <div class="text-8xl font-black mb-2">
+    {{$s.Wins}}<span class="text-red-500">-</span>{{sub 24 $s.Wins}}
+  </div>
+  <div class="text-2xl font-bold mb-8 {{$tier.Class}}">
+    {{$tier.Name}}
+  </div>
+
+  <!-- AdSense slot -->
+  <!--
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  -->
+
+  <!-- Driver lineup -->
+  <div class="grid grid-cols-5 gap-3 mb-8">
+    {{range $s.Picks}}
+    <div class="bg-neutral-900 rounded-lg p-3 text-center text-sm">
+      <div class="text-xs text-neutral-500 mb-1">{{.Era.Name}}</div>
+      <div class="font-bold text-white leading-tight">{{.Driver.Name}}</div>
+      <div class="text-xs text-neutral-400 mt-1">{{.Driver.Constructor}}</div>
+      <div class="text-xs text-neutral-500">'{{mod .Driver.Season 100 | printf "%02d"}}</div>
+      <div class="text-xs text-neutral-600 mt-1">Pace: {{printf "%.1f" .Driver.PaceScore}}</div>
+    </div>
+    {{end}}
+  </div>
+
+  <!-- Share + actions -->
+  <div class="flex flex-col gap-3 items-center mb-8">
+    <button
+      onclick="navigator.clipboard.writeText(window.location.href); this.textContent='Copied!';"
+      class="bg-neutral-800 hover:bg-neutral-700 px-6 py-2 rounded-lg text-sm transition-colors">
+      Copy share link
+    </button>
+    <a href="/" class="text-neutral-400 hover:text-white text-sm transition-colors">Play again</a>
+  </div>
+
+  <!-- Leaderboard submit -->
+  <div class="bg-neutral-900 rounded-xl p-6 text-left">
+    <h3 class="font-bold mb-3">Submit to leaderboard</h3>
+    <form action="/result/{{$s.ID}}/submit" method="POST" class="flex gap-3">
+      <input type="text" name="name" placeholder="Your name"
+        maxlength="50" required
+        class="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-red-500" />
+      <button type="submit"
+        class="bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2 rounded-lg text-sm transition-colors">
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+{{end}}

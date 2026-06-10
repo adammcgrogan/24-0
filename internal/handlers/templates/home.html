@@ -1,0 +1,71 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="max-w-2xl mx-auto text-center py-16">
+  <p class="text-red-500 text-sm font-semibold tracking-widest uppercase mb-4">Formula 1</p>
+  <h1 class="text-7xl font-black tracking-tighter mb-4">
+    24<span class="text-red-500">-</span>0
+  </h1>
+  <p class="text-neutral-400 text-xl mb-12 leading-relaxed">
+    Spin a random F1 constructor and season.<br>
+    Draft one driver per era. Build your perfect team.<br>
+    Can they go <strong class="text-white">24 races, zero losses</strong>?
+  </p>
+
+  <form action="/game/start" method="POST">
+    <button type="submit"
+      class="bg-red-600 hover:bg-red-500 text-white font-bold text-lg px-10 py-4 rounded-lg transition-colors">
+      START DRAFTING
+    </button>
+  </form>
+
+  <div class="mt-16 grid grid-cols-3 gap-6 text-left">
+    <div class="bg-neutral-900 rounded-lg p-5">
+      <div class="text-2xl mb-2">🎰</div>
+      <h3 class="font-bold mb-1">Spin the slot</h3>
+      <p class="text-neutral-400 text-sm">A random F1 constructor and season is revealed each round.</p>
+    </div>
+    <div class="bg-neutral-900 rounded-lg p-5">
+      <div class="text-2xl mb-2">🏎️</div>
+      <h3 class="font-bold mb-1">Draft a driver</h3>
+      <p class="text-neutral-400 text-sm">Pick one of the two drivers who raced for that team that year.</p>
+    </div>
+    <div class="bg-neutral-900 rounded-lg p-5">
+      <div class="text-2xl mb-2">🏆</div>
+      <h3 class="font-bold mb-1">Simulate the season</h3>
+      <p class="text-neutral-400 text-sm">Five drivers. Five eras. One perfect 24-race season — if you're good enough.</p>
+    </div>
+  </div>
+
+  <div class="mt-8 bg-neutral-900 rounded-lg p-5 text-left">
+    <h3 class="font-bold mb-2 text-sm text-neutral-400 uppercase tracking-wider">The 5 Eras</h3>
+    <div class="grid grid-cols-5 gap-2 text-center text-sm">
+      <div class="bg-neutral-800 rounded p-2">
+        <div class="text-xs text-neutral-500">Round 1</div>
+        <div class="font-semibold">Classic</div>
+        <div class="text-xs text-neutral-500">1950–79</div>
+      </div>
+      <div class="bg-neutral-800 rounded p-2">
+        <div class="text-xs text-neutral-500">Round 2</div>
+        <div class="font-semibold">Turbo</div>
+        <div class="text-xs text-neutral-500">1980–93</div>
+      </div>
+      <div class="bg-neutral-800 rounded p-2">
+        <div class="text-xs text-neutral-500">Round 3</div>
+        <div class="font-semibold">Schumacher</div>
+        <div class="text-xs text-neutral-500">1994–09</div>
+      </div>
+      <div class="bg-neutral-800 rounded p-2">
+        <div class="text-xs text-neutral-500">Round 4</div>
+        <div class="font-semibold">Hybrid</div>
+        <div class="text-xs text-neutral-500">2010–19</div>
+      </div>
+      <div class="bg-neutral-800 rounded p-2">
+        <div class="text-xs text-neutral-500">Round 5</div>
+        <div class="font-semibold">Modern</div>
+        <div class="text-xs text-neutral-500">2020–24</div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,58 @@
+{{template "base" .}}
+
+{{define "content"}}
+{{$s := .}}
+<div class="max-w-3xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl font-black">Build Your Team</h2>
+    <div class="flex gap-4 text-sm">
+      <span class="bg-neutral-800 rounded px-3 py-1">
+        Round <strong>{{len $s.Picks | add 1}}</strong> of 5
+      </span>
+      <span class="bg-neutral-800 rounded px-3 py-1 {{if eq $s.ConstructorSkipsLeft 0}}text-neutral-600{{end}}">
+        🔄 Constructor skips: {{$s.ConstructorSkipsLeft}}
+      </span>
+      <span class="bg-neutral-800 rounded px-3 py-1 {{if eq $s.EraSkipsLeft 0}}text-neutral-600{{end}}">
+        ⏭️ Era skips: {{$s.EraSkipsLeft}}
+      </span>
+    </div>
+  </div>
+
+  <!-- Driver slots -->
+  <div class="grid grid-cols-5 gap-3 mb-8" id="lineup">
+    {{range $i, $p := $s.Picks}}
+    <div class="bg-neutral-800 rounded-lg p-3 text-center text-sm">
+      <div class="text-xs text-neutral-500 mb-1">{{$p.Era.Name}}</div>
+      <div class="font-bold text-white leading-tight">{{$p.Driver.Name}}</div>
+      <div class="text-xs text-neutral-400 mt-1">{{$p.Driver.Constructor}} '{{mod $p.Driver.Season 100 | printf "%02d"}}</div>
+    </div>
+    {{end}}
+    {{range emptySlots $s.Picks}}
+    <div class="bg-neutral-900 border border-dashed border-neutral-700 rounded-lg p-3 text-center text-sm text-neutral-600">
+      <div class="text-2xl mb-1">?</div>
+      <div>Empty</div>
+    </div>
+    {{end}}
+  </div>
+
+  <!-- Spin area -->
+  <div id="spin-area" class="bg-neutral-900 rounded-xl p-6 text-center">
+    {{if $s.PendingSpin}}
+      {{template "spin_result.html" map "Session" $s "Spin" $s.PendingSpin}}
+    {{else}}
+    <p class="text-neutral-400 mb-6">Ready to draft your next driver.</p>
+    <button
+      hx-post="/game/{{$s.ID}}/spin"
+      hx-target="#spin-area"
+      hx-swap="innerHTML"
+      hx-indicator="#spin-indicator"
+      class="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-3 rounded-lg transition-colors">
+      SPIN
+    </button>
+    <div id="spin-indicator" class="htmx-indicator mt-4 text-neutral-400 text-sm">
+      Spinning...
+    </div>
+    {{end}}
+  </div>
+</div>
+{{end}}

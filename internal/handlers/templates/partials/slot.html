@@ -1,0 +1,18 @@
+{{define "slot.html"}}
+{{$pick := .Pick}}
+<div class="text-center">
+  <p class="text-green-400 font-semibold mb-4">✓ {{$pick.Driver.Name}} added to your lineup!</p>
+  <p class="text-neutral-400 mb-6 text-sm">{{len .Session.Picks}} of 5 drivers drafted.</p>
+  {{if lt (len .Session.Picks) 5}}
+  <button
+    hx-post="/game/{{.Session.ID}}/spin"
+    hx-target="#spin-area"
+    hx-swap="innerHTML"
+    class="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-3 rounded-lg transition-colors">
+    SPIN NEXT ERA
+  </button>
+  {{else}}
+  <p class="text-neutral-400 text-sm">Simulating your season...</p>
+  {{end}}
+</div>
+{{end}}

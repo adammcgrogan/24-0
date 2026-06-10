@@ -1,0 +1,51 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en" class="bg-neutral-950 text-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>24-0.win — Build the Perfect F1 Team</title>
+  <meta name="description" content="Spin a random F1 constructor and season, draft one driver at a time, and simulate the perfect 24-race season. Can your team go 24-0?" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/static/htmx.min.js"></script>
+  <style>
+    .tier-perfect      { color: #f59e0b; text-shadow: 0 0 20px #f59e0b88; }
+    .tier-near-perfect { color: #a78bfa; }
+    .tier-dominant     { color: #34d399; }
+    .tier-contender    { color: #60a5fa; }
+    .tier-winner       { color: #94a3b8; }
+    .tier-points       { color: #6b7280; }
+    .tier-backmarker   { color: #4b5563; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinning { animation: spin 0.6s linear infinite; }
+  </style>
+  <!-- Google AdSense: replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID -->
+  <!--
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  -->
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <nav class="border-b border-neutral-800 px-6 py-4 flex items-center justify-between">
+    <a href="/" class="text-2xl font-black tracking-tight">24<span class="text-red-500">-</span>0</a>
+    <div class="flex gap-6 text-sm text-neutral-400">
+      <a href="/leaderboard" class="hover:text-white transition-colors">Leaderboard</a>
+      <!-- Ko-fi: replace YOUR_HANDLE with your Ko-fi username -->
+      <a href="https://ko-fi.com/YOUR_HANDLE" target="_blank" rel="noopener"
+         class="hover:text-white transition-colors">Support ☕</a>
+    </div>
+  </nav>
+
+  <main class="flex-1 px-4 py-8">
+    {{block "content" .}}{{end}}
+  </main>
+
+  <footer class="border-t border-neutral-800 px-6 py-4 text-center text-xs text-neutral-600">
+    Open source on <a href="https://github.com/adammcgrogan/24-0" class="underline hover:text-neutral-400">GitHub</a>.
+    F1 data via <a href="https://jolpica.com" class="underline hover:text-neutral-400">Jolpica</a>.
+    Not affiliated with Formula 1 or the FIA.
+  </footer>
+
+</body>
+</html>
+{{end}}
