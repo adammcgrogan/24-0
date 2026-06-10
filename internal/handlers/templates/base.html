@@ -14,20 +14,20 @@
   <style>
     :root {
       --red:       #e10600;
-      --red-dim:   rgba(225,6,0,0.12);
-      --red-glow:  rgba(225,6,0,0.35);
-      --bg:        #080808;
-      --surf:      #101010;
-      --surf-2:    #151515;
-      --surf-3:    #1c1c1c;
-      --border:    #1e1e1e;
-      --border-2:  #2a2a2a;
-      --border-3:  #363636;
-      --text:      #efefef;
-      --text-2:    #888;
-      --text-3:    #484848;
+      --red-dim:   rgba(225,6,0,0.14);
+      --red-glow:  rgba(225,6,0,0.38);
+      --bg:        #111111;
+      --surf:      #1a1a1a;
+      --surf-2:    #222222;
+      --surf-3:    #2d2d2d;
+      --border:    #2e2e2e;
+      --border-2:  #3d3d3d;
+      --border-3:  #525252;
+      --text:      #f5f5f5;
+      --text-2:    #aaaaaa;
+      --text-3:    #676767;
       --blue:      #3b82f6;
-      --blue-dim:  rgba(59,130,246,0.12);
+      --blue-dim:  rgba(59,130,246,0.14);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -210,7 +210,7 @@
       background: linear-gradient(135deg, rgba(225,6,0,.07) 0%, transparent 55%);
       opacity:0; transition:opacity .2s;
     }
-    .pick-card:hover { transform: translateY(-4px) scale(1.015); border-color: var(--red); box-shadow: 0 10px 35px rgba(225,6,0,.22), 0 0 0 1px rgba(225,6,0,.25); }
+    .pick-card:hover { transform: translateY(-3px); border-color: var(--red); box-shadow: 0 12px 40px rgba(225,6,0,.25), 0 0 0 1px rgba(225,6,0,.3); }
     .pick-card:hover::before { opacity:1; }
 
     /* ── Component pick cards ─────────────────── */
@@ -322,6 +322,76 @@
     }
     input[type="text"]:focus { outline:none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(225,6,0,.1); }
     input[type="text"]::placeholder { color: var(--text-3); }
+
+    /* ── Option badge (A / B) ────────────────── */
+    .option-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--surf-3);
+      border: 1px solid var(--border-2);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: .9rem;
+      letter-spacing: 0;
+      color: var(--text-3);
+      flex-shrink: 0;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+    .pick-card:hover  .option-badge { background: var(--red);  border-color: var(--red);  color: #fff; }
+    .comp-card:hover  .option-badge { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+    /* ── VS separator ─────────────────────────── */
+    .vs-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .vs-col::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 1px;
+      background: var(--border);
+    }
+    .vs-pill {
+      position: relative;
+      z-index: 1;
+      background: var(--surf-3);
+      border: 1px solid var(--border-2);
+      border-radius: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: .7rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: .3rem .52rem;
+    }
+
+    /* ── Card pick footer ─────────────────────── */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .35rem;
+      padding: .65rem 1rem;
+      margin: auto -1.5rem -1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      transition: background .18s, border-color .18s, color .18s;
+    }
+    .pick-card:hover .card-footer { background: rgba(225,6,0,.1); border-top-color: rgba(225,6,0,.4); color: var(--red); }
+    .comp-card:hover .card-footer { background: rgba(59,130,246,.1); border-top-color: rgba(59,130,246,.4); color: var(--blue); }
 
     /* ── Scrollbar ────────────────────────────── */
     ::-webkit-scrollbar { width:4px; }

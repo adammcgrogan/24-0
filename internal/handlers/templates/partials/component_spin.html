@@ -2,22 +2,23 @@
 {{$s := .Session}}
 {{$spin := .Spin}}
 
-<!-- Category reveal -->
-<div class="anim-slot" style="margin-bottom:1.6rem; text-align:center; padding:1.3rem; background:var(--surf); border:1px solid var(--border); border-radius:2px; position:relative; overflow:hidden;">
-  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--blue) 0%, transparent 100%);"></div>
-  <div style="display:flex; align-items:center; justify-content:center; gap:.75rem; flex-wrap:wrap;">
-    <span style="font-size:.72rem; color:var(--text-3);">{{$spin.Era.Name}}</span>
-    <span style="width:1px; height:12px; background:var(--border-2); display:inline-block;"></span>
-    <span class="f-display" style="font-weight:800; font-size:.8rem; text-transform:uppercase; letter-spacing:.1em;
-          background:rgba(59,130,246,.15); color:var(--blue); border-radius:2px; padding:.2rem .55rem;">
+<!-- ── Category header ────────────────────────────── -->
+<div class="anim-slot" style="margin-bottom:1.4rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.6rem;
+     padding:1.1rem 1.4rem; background:var(--surf-2); border:1px solid var(--border-2); border-radius:2px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--blue) 30%, transparent 100%);"></div>
+  <div style="display:flex; align-items:center; gap:.75rem;">
+    <span style="font-size:.78rem; color:var(--text-3);">{{$spin.Era.Name}}</span>
+    <span style="width:1px; height:14px; background:var(--border-2); display:inline-block;"></span>
+    <span class="f-display" style="font-weight:800; font-size:.82rem; text-transform:uppercase; letter-spacing:.1em;
+          background:rgba(59,130,246,.18); color:var(--blue); border-radius:2px; padding:.2rem .6rem;">
       {{categoryName $spin.Category}}
     </span>
   </div>
-  <p style="font-size:.78rem; color:var(--text-3); margin-top:.5rem;">Choose the best option for your team</p>
+  <p style="font-size:.78rem; color:var(--text-3);">Choose the best option for your team</p>
 </div>
 
-<!-- Component pick cards -->
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1rem;">
+<!-- ── Option cards: A — VS — B ──────────────────── -->
+<div style="display:grid; grid-template-columns:1fr 52px 1fr; align-items:stretch; margin-bottom:1rem;">
 
   <!-- Option A -->
   <button
@@ -25,22 +26,38 @@
     hx-target="#spin-area"
     hx-swap="innerHTML"
     class="comp-card anim-slide-left"
-    style="padding:1.4rem; text-align:left; background:none; border:none; cursor:pointer;">
-    <div class="f-display" style="font-weight:800; font-size:1rem; color:var(--text); line-height:1.3; margin-bottom:.9rem; letter-spacing:.01em;">{{$spin.OptionA.Name}}</div>
+    style="padding:1.5rem; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; border-right:none; border-radius:2px 0 0 2px; background:none; border:1px solid var(--border-2);">
 
-    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.8rem; text-align:center; margin-bottom:.8rem;">
-      <div class="f-mono" style="font-size:1.6rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.OptionA.Score}}</div>
-      <div style="font-size:.62rem; color:var(--text-3); margin-top:.15rem;">Score / 100</div>
+    <!-- Name row -->
+    <div style="display:flex; align-items:flex-start; gap:.7rem; margin-bottom:1rem;">
+      <div class="option-badge">A</div>
+      <div class="f-display" style="font-weight:800; font-size:1.05rem; color:var(--text); line-height:1.2; letter-spacing:.01em; flex:1; min-width:0;">{{$spin.OptionA.Name}}</div>
+    </div>
+
+    <!-- Score hero -->
+    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.9rem; text-align:center; margin-bottom:.9rem;">
+      <div class="f-mono" style="font-size:2rem; font-weight:700; color:var(--text); line-height:1;">{{printf "%.0f" $spin.OptionA.Score}}</div>
+      <div style="font-size:.6rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.1em; text-transform:uppercase;">Score / 100</div>
     </div>
 
     {{if $spin.OptionA.Specialty}}
-    <div style="font-size:.75rem; color:var(--text-3); margin-bottom:.6rem;">
+    <div style="font-size:.76rem; color:var(--text-3); margin-bottom:.55rem;">
       Best at: <span style="color:var(--text-2); font-weight:600;">{{$spin.OptionA.Specialty}}</span>
     </div>
     {{end}}
 
-    <p style="font-size:.78rem; color:var(--text-3); line-height:1.55;">{{$spin.OptionA.Description}}</p>
+    <p style="font-size:.8rem; color:var(--text-3); line-height:1.6; margin-bottom:auto;">{{$spin.OptionA.Description}}</p>
+
+    <!-- Pick footer -->
+    <div class="card-footer" style="margin-left:-1.5rem; margin-right:-1.5rem; margin-bottom:-1.5rem;">
+      Pick A &nbsp;→
+    </div>
   </button>
+
+  <!-- VS col -->
+  <div class="vs-col">
+    <div class="vs-pill">VS</div>
+  </div>
 
   <!-- Option B -->
   <button
@@ -48,21 +65,32 @@
     hx-target="#spin-area"
     hx-swap="innerHTML"
     class="comp-card anim-slide-right"
-    style="padding:1.4rem; text-align:left; background:none; border:none; cursor:pointer;">
-    <div class="f-display" style="font-weight:800; font-size:1rem; color:var(--text); line-height:1.3; margin-bottom:.9rem; letter-spacing:.01em;">{{$spin.OptionB.Name}}</div>
+    style="padding:1.5rem; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; border-left:none; border-radius:0 2px 2px 0; background:none; border:1px solid var(--border-2);">
 
-    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.8rem; text-align:center; margin-bottom:.8rem;">
-      <div class="f-mono" style="font-size:1.6rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.OptionB.Score}}</div>
-      <div style="font-size:.62rem; color:var(--text-3); margin-top:.15rem;">Score / 100</div>
+    <!-- Name row -->
+    <div style="display:flex; align-items:flex-start; gap:.7rem; margin-bottom:1rem;">
+      <div class="option-badge">B</div>
+      <div class="f-display" style="font-weight:800; font-size:1.05rem; color:var(--text); line-height:1.2; letter-spacing:.01em; flex:1; min-width:0;">{{$spin.OptionB.Name}}</div>
+    </div>
+
+    <!-- Score hero -->
+    <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.9rem; text-align:center; margin-bottom:.9rem;">
+      <div class="f-mono" style="font-size:2rem; font-weight:700; color:var(--text); line-height:1;">{{printf "%.0f" $spin.OptionB.Score}}</div>
+      <div style="font-size:.6rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.1em; text-transform:uppercase;">Score / 100</div>
     </div>
 
     {{if $spin.OptionB.Specialty}}
-    <div style="font-size:.75rem; color:var(--text-3); margin-bottom:.6rem;">
+    <div style="font-size:.76rem; color:var(--text-3); margin-bottom:.55rem;">
       Best at: <span style="color:var(--text-2); font-weight:600;">{{$spin.OptionB.Specialty}}</span>
     </div>
     {{end}}
 
-    <p style="font-size:.78rem; color:var(--text-3); line-height:1.55;">{{$spin.OptionB.Description}}</p>
+    <p style="font-size:.8rem; color:var(--text-3); line-height:1.6; margin-bottom:auto;">{{$spin.OptionB.Description}}</p>
+
+    <!-- Pick footer -->
+    <div class="card-footer" style="margin-left:-1.5rem; margin-right:-1.5rem; margin-bottom:-1.5rem;">
+      Pick B &nbsp;→
+    </div>
   </button>
 
 </div>

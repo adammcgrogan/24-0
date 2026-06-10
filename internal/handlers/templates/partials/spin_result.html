@@ -2,19 +2,21 @@
 {{$s := .Session}}
 {{$spin := .Spin}}
 
-<!-- Constructor reveal -->
-<div class="anim-slot" style="margin-bottom:1.6rem; text-align:center; padding:1.4rem; background:var(--surf); border:1px solid var(--border); border-radius:2px; position:relative; overflow:hidden;">
-  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
-  <p class="section-label" style="margin-bottom:.5rem;">Constructor Drawn</p>
-  <h3 class="f-display" style="font-weight:900; font-size:1.7rem; letter-spacing:.02em; line-height:1.1;">
-    {{$spin.Constructor}}
-    <span style="color:var(--text-3); font-size:1.1rem; font-weight:400;">&apos;{{mod $spin.Season 100 | printf "%02d"}}</span>
-  </h3>
-  <p style="font-size:.8rem; color:var(--text-3); margin-top:.4rem;">Pick one driver for your team</p>
+<!-- ── Constructor header ──────────────────────────── -->
+<div class="anim-slot" style="margin-bottom:1.4rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.6rem;
+     padding:1.1rem 1.4rem; background:var(--surf-2); border:1px solid var(--border-2); border-radius:2px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--red) 30%, transparent 100%);"></div>
+  <div>
+    <p class="section-label" style="margin-bottom:.3rem;">Constructor Drawn</p>
+    <h3 class="f-display" style="font-weight:900; font-size:1.5rem; letter-spacing:.02em; line-height:1; color:var(--text);">
+      {{$spin.Constructor}}&thinsp;<span style="color:var(--text-3); font-size:1rem; font-weight:500;">&apos;{{mod $spin.Season 100 | printf "%02d"}}</span>
+    </h3>
+  </div>
+  <p style="font-size:.8rem; color:var(--text-3);">Pick one driver for your team</p>
 </div>
 
-<!-- Driver pick cards -->
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.2rem;">
+<!-- ── Driver cards: A — VS — B ───────────────────── -->
+<div style="display:grid; grid-template-columns:1fr 52px 1fr; align-items:stretch; margin-bottom:1.2rem;">
 
   <!-- Driver A -->
   <button
@@ -22,35 +24,52 @@
     hx-target="#spin-area"
     hx-swap="innerHTML"
     class="pick-card anim-slide-left"
-    style="padding:1.4rem; text-align:left; background:none; border:none;">
-    <div class="f-display" style="font-weight:800; font-size:1.15rem; color:var(--text); line-height:1.2; margin-bottom:.3rem; letter-spacing:.01em;">{{$spin.DriverA.Name}}</div>
-    <div style="font-size:.75rem; color:var(--text-3); margin-bottom:1rem;">{{$spin.DriverA.Season}} · {{$spin.DriverA.Constructor}}</div>
+    style="padding:1.5rem; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; border-right:none; border-radius:2px 0 0 2px;">
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin-bottom:.75rem;">
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
-        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverA.Wins}}</div>
-        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Wins</div>
-      </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
-        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverA.Poles}}</div>
-        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Poles</div>
-      </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
-        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.DriverA.Points}}</div>
-        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Pts</div>
+    <!-- Name row -->
+    <div style="display:flex; align-items:flex-start; gap:.7rem; margin-bottom:1rem;">
+      <div class="option-badge">A</div>
+      <div style="flex:1; min-width:0;">
+        <div class="f-display" style="font-weight:900; font-size:1.25rem; color:var(--text); line-height:1.1; letter-spacing:.01em;">{{$spin.DriverA.Name}}</div>
+        <div style="font-size:.72rem; color:var(--text-3); margin-top:.25rem;">{{$spin.DriverA.Season}} · {{$spin.DriverA.Constructor}}</div>
       </div>
     </div>
 
-    <div style="display:flex; align-items:center; justify-content:space-between;">
-      <span style="font-size:.72rem; color:var(--text-3);">Pace</span>
-      <div style="display:flex; align-items:center; gap:.4rem; flex:1; margin-left:.6rem;">
-        <div style="flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden;">
-          <div style="height:100%; width:{{printf "%.0f" $spin.DriverA.PaceScore}}%; background:var(--red); border-radius:2px;"></div>
-        </div>
-        <span class="f-mono" style="font-size:.7rem; color:var(--text); font-weight:700; flex-shrink:0;">{{printf "%.0f" $spin.DriverA.PaceScore}}</span>
+    <!-- Stats -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin-bottom:.9rem;">
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.6rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.2rem; font-weight:700; color:var(--text);">{{$spin.DriverA.Wins}}</div>
+        <div style="font-size:.58rem; color:var(--text-3); margin-top:.1rem; letter-spacing:.05em; text-transform:uppercase;">Wins</div>
       </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.6rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.2rem; font-weight:700; color:var(--text);">{{$spin.DriverA.Poles}}</div>
+        <div style="font-size:.58rem; color:var(--text-3); margin-top:.1rem; letter-spacing:.05em; text-transform:uppercase;">Poles</div>
+      </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.6rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.2rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.DriverA.Points}}</div>
+        <div style="font-size:.58rem; color:var(--text-3); margin-top:.1rem; letter-spacing:.05em; text-transform:uppercase;">Pts</div>
+      </div>
+    </div>
+
+    <!-- Pace bar -->
+    <div style="display:flex; align-items:center; gap:.55rem; margin-bottom:auto;">
+      <span style="font-size:.7rem; color:var(--text-3); flex-shrink:0;">Pace</span>
+      <div style="flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden;">
+        <div style="height:100%; width:{{printf "%.0f" $spin.DriverA.PaceScore}}%; background:var(--red); border-radius:2px;"></div>
+      </div>
+      <span class="f-mono" style="font-size:.72rem; color:var(--text); font-weight:700; flex-shrink:0; min-width:1.8rem; text-align:right;">{{printf "%.0f" $spin.DriverA.PaceScore}}</span>
+    </div>
+
+    <!-- Pick footer -->
+    <div class="card-footer" style="margin-left:-1.5rem; margin-right:-1.5rem; margin-bottom:-1.5rem;">
+      Pick A &nbsp;→
     </div>
   </button>
+
+  <!-- VS col -->
+  <div class="vs-col">
+    <div class="vs-pill">VS</div>
+  </div>
 
   <!-- Driver B -->
   <button
@@ -58,41 +77,53 @@
     hx-target="#spin-area"
     hx-swap="innerHTML"
     class="pick-card anim-slide-right"
-    style="padding:1.4rem; text-align:left; background:none; border:none;">
-    <div class="f-display" style="font-weight:800; font-size:1.15rem; color:var(--text); line-height:1.2; margin-bottom:.3rem; letter-spacing:.01em;">{{$spin.DriverB.Name}}</div>
-    <div style="font-size:.75rem; color:var(--text-3); margin-bottom:1rem;">{{$spin.DriverB.Season}} · {{$spin.DriverB.Constructor}}</div>
+    style="padding:1.5rem; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; border-left:none; border-radius:0 2px 2px 0;">
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin-bottom:.75rem;">
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
-        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverB.Wins}}</div>
-        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Wins</div>
-      </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
-        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{$spin.DriverB.Poles}}</div>
-        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Poles</div>
-      </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.55rem .3rem; text-align:center;">
-        <div class="f-mono" style="font-size:1.1rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.DriverB.Points}}</div>
-        <div style="font-size:.6rem; color:var(--text-3); margin-top:.1rem;">Pts</div>
+    <!-- Name row -->
+    <div style="display:flex; align-items:flex-start; gap:.7rem; margin-bottom:1rem;">
+      <div class="option-badge">B</div>
+      <div style="flex:1; min-width:0;">
+        <div class="f-display" style="font-weight:900; font-size:1.25rem; color:var(--text); line-height:1.1; letter-spacing:.01em;">{{$spin.DriverB.Name}}</div>
+        <div style="font-size:.72rem; color:var(--text-3); margin-top:.25rem;">{{$spin.DriverB.Season}} · {{$spin.DriverB.Constructor}}</div>
       </div>
     </div>
 
-    <div style="display:flex; align-items:center; justify-content:space-between;">
-      <span style="font-size:.72rem; color:var(--text-3);">Pace</span>
-      <div style="display:flex; align-items:center; gap:.4rem; flex:1; margin-left:.6rem;">
-        <div style="flex:1; height:3px; background:var(--border); border-radius:2px; overflow:hidden;">
-          <div style="height:100%; width:{{printf "%.0f" $spin.DriverB.PaceScore}}%; background:var(--red); border-radius:2px;"></div>
-        </div>
-        <span class="f-mono" style="font-size:.7rem; color:var(--text); font-weight:700; flex-shrink:0;">{{printf "%.0f" $spin.DriverB.PaceScore}}</span>
+    <!-- Stats -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin-bottom:.9rem;">
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.6rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.2rem; font-weight:700; color:var(--text);">{{$spin.DriverB.Wins}}</div>
+        <div style="font-size:.58rem; color:var(--text-3); margin-top:.1rem; letter-spacing:.05em; text-transform:uppercase;">Wins</div>
       </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.6rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.2rem; font-weight:700; color:var(--text);">{{$spin.DriverB.Poles}}</div>
+        <div style="font-size:.58rem; color:var(--text-3); margin-top:.1rem; letter-spacing:.05em; text-transform:uppercase;">Poles</div>
+      </div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.6rem .3rem; text-align:center;">
+        <div class="f-mono" style="font-size:1.2rem; font-weight:700; color:var(--text);">{{printf "%.0f" $spin.DriverB.Points}}</div>
+        <div style="font-size:.58rem; color:var(--text-3); margin-top:.1rem; letter-spacing:.05em; text-transform:uppercase;">Pts</div>
+      </div>
+    </div>
+
+    <!-- Pace bar -->
+    <div style="display:flex; align-items:center; gap:.55rem; margin-bottom:auto;">
+      <span style="font-size:.7rem; color:var(--text-3); flex-shrink:0;">Pace</span>
+      <div style="flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden;">
+        <div style="height:100%; width:{{printf "%.0f" $spin.DriverB.PaceScore}}%; background:var(--red); border-radius:2px;"></div>
+      </div>
+      <span class="f-mono" style="font-size:.72rem; color:var(--text); font-weight:700; flex-shrink:0; min-width:1.8rem; text-align:right;">{{printf "%.0f" $spin.DriverB.PaceScore}}</span>
+    </div>
+
+    <!-- Pick footer -->
+    <div class="card-footer" style="margin-left:-1.5rem; margin-right:-1.5rem; margin-bottom:-1.5rem;">
+      Pick B &nbsp;→
     </div>
   </button>
 
 </div>
 
-<!-- Reroll button -->
+<!-- ── Reroll ───────────────────────────────────────── -->
 {{if gt $s.ConstructorSkipsLeft 0}}
-<div style="display:flex; justify-content:center;">
+<div style="display:flex; justify-content:center; padding-top:.4rem;">
   <button
     hx-post="/game/{{$s.ID}}/skip/constructor"
     hx-target="#spin-area"
