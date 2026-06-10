@@ -2,14 +2,11 @@
 {{$s := .Session}}
 {{$spin := .Spin}}
 <div>
-  <!-- Context: which role this spin is for -->
   <div class="mb-5 text-center">
-    <span class="text-xs text-neutral-500 uppercase tracking-widest">{{$spin.Era.Name}} · </span>
-    <span class="text-xs bg-red-900 text-red-300 rounded px-2 py-0.5 font-bold">{{$spin.Era.Role}}</span>
-    <h3 class="text-xl font-black mt-2">{{$spin.Constructor}}
+    <h3 class="text-xl font-black">{{$spin.Constructor}}
       <span class="text-neutral-400 font-normal text-base">'{{mod $spin.Season 100 | printf "%02d"}}</span>
     </h3>
-    <p class="text-xs text-neutral-500 mt-1">{{$spin.Era.RoleDesc}}</p>
+    <p class="text-xs text-neutral-500 mt-1">Pick one driver for your team</p>
   </div>
 
   <div class="grid grid-cols-2 gap-4 mb-6">
@@ -70,17 +67,16 @@
     </button>
   </div>
 
-  <!-- Reroll constructor only (era already chosen by player) -->
-  <div class="flex gap-3 justify-center text-sm">
-    {{if gt $s.ConstructorSkipsLeft 0}}
+  {{if gt $s.ConstructorSkipsLeft 0}}
+  <div class="flex justify-center">
     <button
       hx-post="/game/{{$s.ID}}/skip/constructor"
       hx-target="#spin-area"
       hx-swap="innerHTML"
-      class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-4 py-2 rounded-lg transition-colors">
-      🔄 Different constructor ({{$s.ConstructorSkipsLeft}} left)
+      class="bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-sm px-4 py-2 rounded-lg transition-colors">
+      🔄 Different team ({{$s.ConstructorSkipsLeft}} left)
     </button>
-    {{end}}
   </div>
+  {{end}}
 </div>
 {{end}}

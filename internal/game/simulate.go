@@ -16,11 +16,10 @@ type SeasonResult struct {
 type circuit struct {
 	name        string
 	circuitType string  // "normal" | "street" | "technical" | "wet"
-	variance    float64 // race-to-race randomness factor
-	dnfBoost    float64 // extra DNF probability on top of baseDNFChance
+	variance    float64 // race-to-race randomness
+	dnfBoost    float64 // extra DNF probability
 }
 
-// raceCalendar is the 24-round season used for simulation (2024 F1 calendar).
 var raceCalendar = []circuit{
 	{"Bahrain Grand Prix", "normal", 0.05, 0.00},
 	{"Saudi Arabian Grand Prix", "street", 0.10, 0.02},
@@ -50,20 +49,9 @@ var raceCalendar = []circuit{
 
 const baseDNFChance = 0.05
 
-// driverRoleWeights defines how much each era's driver contributes per circuit type.
-// Weights sum to 1.0 within each circuit type across all 5 eras.
-var driverRoleWeights = map[string]map[string]float64{
-	"normal":    {"classic": 0.25, "turbo": 0.12, "schumacher": 0.40, "hybrid": 0.12, "modern": 0.11},
-	"technical": {"classic": 0.15, "turbo": 0.45, "schumacher": 0.13, "hybrid": 0.13, "modern": 0.14},
-	"street":    {"classic": 0.15, "turbo": 0.13, "schumacher": 0.13, "hybrid": 0.14, "modern": 0.45},
-	"wet":       {"classic": 0.20, "turbo": 0.12, "schumacher": 0.13, "hybrid": 0.45, "modern": 0.10},
-}
-
-// componentWeights defines the simulation contribution of each non-driver category
-// on each circuit type. These sit ALONGSIDE the driver weights — the two sub-scores
-// are averaged together so the combined team pace stays in the 0-100 range.
+// componentWeights defines how much each team role contributes per circuit type.
+// Weights sum to 1.0 within each circuit type.
 var componentWeights = map[string]map[string]float64{
-	// category → circuit type → contribution weight (within component sub-score)
 	"principal": {"normal": 0.30, "technical": 0.20, "street": 0.20, "wet": 0.30},
 	"td":        {"normal": 0.20, "technical": 0.40, "street": 0.15, "wet": 0.15},
 	"engineer":  {"normal": 0.20, "technical": 0.20, "street": 0.20, "wet": 0.40},
@@ -71,26 +59,47 @@ var componentWeights = map[string]map[string]float64{
 	"strategy":  {"normal": 0.10, "technical": 0.10, "street": 0.20, "wet": 0.40},
 }
 
-// SimulateSeason runs a single F1 season for the given picks.
-// Driver role weights vary by circuit type; component contributions add a second
-// dimension — a great Technical Director visibly helps on technical circuits, etc.
+// SimulateSeason runs a full 24-race season for the given picks.
+// Driver contribution is the average pace of both drivers.
+// Component contribution varies by circuit type.
 func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 	if len(picks) == 0 {
 		return emptySeasonResult()
 	}
-
 	if math.IsNaN(fieldAverage) || math.IsInf(fieldAverage, 0) || fieldAverage <= 0 {
 		fieldAverage = 50
 	}
 
-	// Separate driver and component picks.
-	byEra := map[string]f1.Pick{}
+	// Average driver pace.
+	driverPace := 0.0
+	driverCount := 0
+	heroDriver := ""
+	bestPace := -1.0
+	for _, p := range picks {
+		if p.Type == "component" {
+			continue
+		}
+		if math.IsNaN(p.Driver.PaceScore) || math.IsInf(p.Driver.PaceScore, 0) {
+			continue
+		}
+		driverPace += p.Driver.PaceScore
+		driverCount++
+		if p.Driver.PaceScore > bestPace {
+			bestPace = p.Driver.PaceScore
+			heroDriver = p.Driver.Name
+		}
+	}
+	if driverCount > 0 {
+		driverPace /= float64(driverCount)
+	} else {
+		driverPace = fieldAverage
+	}
+
+	// Index component picks by category.
 	byCategory := map[string]f1.Pick{}
 	for _, p := range picks {
 		if p.Type == "component" && p.Component != nil {
 			byCategory[p.Component.Category] = p
-		} else if p.Type != "component" {
-			byEra[p.Era.ID] = p
 		}
 	}
 
@@ -100,32 +109,7 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 	for _, c := range raceCalendar {
 		ct := c.circuitType
 
-		// --- Driver sub-score (weighted by era role, 0-100 scale) ---
-		dWeights := driverRoleWeights[ct]
-		if dWeights == nil {
-			dWeights = driverRoleWeights["normal"]
-		}
-		driverPace := 0.0
-		heroDriver, heroRole := "", ""
-		bestContrib := -1.0
-		for eraID, w := range dWeights {
-			var pace float64
-			if p, ok := byEra[eraID]; ok && !math.IsNaN(p.Driver.PaceScore) {
-				pace = p.Driver.PaceScore
-				contrib := pace * w
-				if contrib > bestContrib {
-					bestContrib = contrib
-					heroDriver = p.Driver.Name
-					heroRole = p.Era.Role
-				}
-			} else {
-				pace = fieldAverage
-			}
-			driverPace += pace * w
-		}
-
-		// --- Component sub-score (each category weighted by circuit type) ---
-		// Weights within componentWeights sum to 1.0 across categories for a given circuit type.
+		// Component sub-score weighted by circuit type.
 		compPace := 0.0
 		totalCompW := 0.0
 		for cat, wMap := range componentWeights {
@@ -143,25 +127,21 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 			totalCompW += w
 		}
 		if totalCompW > 0 {
-			compPace /= totalCompW // normalise to 0-100 scale
+			compPace /= totalCompW
 		} else {
 			compPace = fieldAverage
 		}
 
 		// Blend 60% drivers / 40% components.
 		teamPace := driverPace*0.60 + compPace*0.40
-		winProb := teamPace / (teamPace + fieldAverage)
-		winProb = clamp(winProb, 0, 0.94)
+		winProb := clamp(teamPace/(teamPace+fieldAverage), 0, 0.94)
 
-		dnfProb := baseDNFChance + c.dnfBoost
-		isDNF := rand.Float64() < dnfProb
-
+		isDNF := rand.Float64() < (baseDNFChance + c.dnfBoost)
 		won := false
 		if !isDNF {
 			raceProb := clamp(winProb+(rand.Float64()-0.5)*c.variance*2, 0, 0.99)
 			won = rand.Float64() < raceProb
 		}
-
 		if won {
 			cumWins++
 		}
@@ -175,7 +155,6 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 		}
 		if won {
 			r.HeroDriver = heroDriver
-			r.HeroRole = heroRole
 		}
 		races = append(races, r)
 	}
@@ -184,7 +163,7 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 }
 
 // Simulate is a backward-compatible wrapper used by tests.
-// It assigns eras round-robin. Returns 0 if no driver has a valid PaceScore.
+// Returns 0 if no driver has a valid PaceScore.
 func Simulate(lineup []f1.Driver, fieldAverage float64) int {
 	valid := 0
 	for _, d := range lineup {
@@ -197,8 +176,7 @@ func Simulate(lineup []f1.Driver, fieldAverage float64) int {
 	}
 	picks := make([]f1.Pick, len(lineup))
 	for i, d := range lineup {
-		era := f1.Eras[i%len(f1.Eras)]
-		picks[i] = f1.Pick{Driver: d, Era: era}
+		picks[i] = f1.Pick{Driver: d}
 	}
 	return SimulateSeason(picks, fieldAverage).Wins
 }

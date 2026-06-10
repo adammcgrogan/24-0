@@ -155,26 +155,9 @@ func (s *Session) ComponentPicks() []Pick {
 	return out
 }
 
-// RemainingEras returns driver eras not yet picked (backwards compat).
-func (s *Session) RemainingEras() []Era {
-	return s.RemainingDriverEras()
-}
-
-// RemainingDriverEras returns the eras still available for driver picks.
-func (s *Session) RemainingDriverEras() []Era {
-	picked := map[string]bool{}
-	for _, p := range s.Picks {
-		if p.Type != "component" {
-			picked[p.Era.ID] = true
-		}
-	}
-	var out []Era
-	for _, e := range Eras {
-		if !picked[e.ID] {
-			out = append(out, e)
-		}
-	}
-	return out
+// NeedsDriver returns true when fewer than 2 drivers have been picked.
+func (s *Session) NeedsDriver() bool {
+	return len(s.DriverPicks()) < 2
 }
 
 // RemainingComponentCategories returns component category IDs not yet picked.
@@ -194,7 +177,7 @@ func (s *Session) RemainingComponentCategories() []ComponentCategoryMeta {
 	return out
 }
 
-// IsComplete returns true when all 10 picks have been made.
+// IsComplete returns true when both drivers and all 5 component roles are picked.
 func (s *Session) IsComplete() bool {
-	return len(s.RemainingDriverEras()) == 0 && len(s.RemainingComponentCategories()) == 0
+	return !s.NeedsDriver() && len(s.RemainingComponentCategories()) == 0
 }

@@ -14,10 +14,9 @@ func TestSpinReturnsValidResult(t *testing.T) {
 		{ID: "driver4", Name: "Dave", Constructor: "BlueTeam", Season: 2021, Races: 7, PaceScore: 40},
 	}
 	buildIndex(drivers)
-	defer buildIndex(f1.All()) // restore
+	defer buildIndex(f1.All())
 
-	remaining := []f1.Era{f1.Eras[4]} // Modern
-	spin, err := Spin(drivers, remaining, nil)
+	spin, err := Spin()
 	if err != nil {
 		t.Fatalf("Spin returned error: %v", err)
 	}
@@ -29,37 +28,26 @@ func TestSpinReturnsValidResult(t *testing.T) {
 	}
 }
 
-// TestSpinEveryRealEraPlayable guards against eras becoming unspinnable when
-// the dataset records only a single driver per constructor-season (as the
-// Classic era does). Every era in the real dataset must yield a valid spin.
-func TestSpinEveryRealEraPlayable(t *testing.T) {
-	for _, era := range f1.Eras {
-		spin, err := Spin(f1.All(), []f1.Era{era}, nil)
-		if err != nil {
-			t.Errorf("era %q is unspinnable: %v", era.ID, err)
-			continue
-		}
-		if spin.DriverA.Name == "" || spin.DriverB.Name == "" {
-			t.Errorf("era %q spin produced an empty driver slot", era.ID)
-		}
+func TestSpinRealDataPlayable(t *testing.T) {
+	spin, err := Spin()
+	if err != nil {
+		t.Fatalf("Spin on real data returned error: %v", err)
+	}
+	if spin.DriverA.Name == "" || spin.DriverB.Name == "" {
+		t.Error("Spin produced an empty driver slot")
+	}
+	if spin.Constructor == "" {
+		t.Error("Spin produced empty constructor")
 	}
 }
 
-func TestSpinEmptyEraReturnsError(t *testing.T) {
-	buildIndex(nil) // empty index
+func TestSpinEmptyIndexReturnsError(t *testing.T) {
+	buildIndex(nil)
 	defer buildIndex(f1.All())
 
-	remaining := []f1.Era{f1.Eras[0]}
-	_, err := Spin(nil, remaining, nil)
+	_, err := Spin()
 	if err == nil {
-		t.Error("expected error for empty era, got nil")
-	}
-}
-
-func TestSpinNoRemainingErasReturnsError(t *testing.T) {
-	_, err := Spin(f1.All(), nil, nil)
-	if err == nil {
-		t.Error("expected error for no remaining eras, got nil")
+		t.Error("expected error for empty index, got nil")
 	}
 }
 

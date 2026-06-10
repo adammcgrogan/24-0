@@ -5,30 +5,17 @@
   <p class="text-green-400 font-semibold mb-1 text-center">
     ✓ {{if eq $pick.Type "component"}}{{$pick.Component.Name}}{{else}}{{$pick.Driver.Name}}{{end}} added to your team!
   </p>
-  <p class="text-neutral-500 text-xs mb-5 text-center">{{len $s.Picks}} of 10 picks made</p>
+  <p class="text-neutral-500 text-xs mb-5 text-center">{{len $s.Picks}} of 7 picks made</p>
 
-  {{if $s.RemainingDriverEras}}
-  <div class="mb-4">
-    <p class="text-xs text-neutral-500 uppercase tracking-widest mb-2">Draft a Driver</p>
-    <div class="grid gap-2">
-      {{range $s.RemainingDriverEras}}
-      <button
-        hx-post="/game/{{$s.ID}}/spin"
-        hx-vals='{"era_id": "{{.ID}}"}'
-        hx-target="#spin-area"
-        hx-swap="innerHTML"
-        class="bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-red-500 rounded-xl p-3 text-left transition-all group flex items-center gap-3">
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-0.5">
-            <span class="text-xs text-neutral-500">{{.Name}}</span>
-            <span class="text-xs bg-red-900 text-red-300 rounded px-1.5 py-0.5 font-bold">{{.Role}}</span>
-          </div>
-          <p class="text-xs text-neutral-400">{{.RoleDesc}}</p>
-        </div>
-        <div class="text-neutral-600 group-hover:text-red-400 text-xl">→</div>
-      </button>
-      {{end}}
-    </div>
+  {{if $s.NeedsDriver}}
+  <div class="mb-5">
+    <button
+      hx-post="/game/{{$s.ID}}/spin"
+      hx-target="#spin-area"
+      hx-swap="innerHTML"
+      class="w-full bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-4 rounded-xl transition-colors text-lg">
+      Spin for Driver {{if eq (len ($s.DriverPicks)) 1}}2{{else}}1{{end}}
+    </button>
   </div>
   {{end}}
 

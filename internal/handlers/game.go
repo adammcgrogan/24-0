@@ -38,27 +38,12 @@ func Spin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	remaining := s.RemainingEras()
-	if len(remaining) == 0 {
-		http.Error(w, "all eras already drafted", http.StatusBadRequest)
+	if !s.NeedsDriver() {
+		http.Error(w, "already have 2 drivers", http.StatusBadRequest)
 		return
 	}
 
-	// The player may select which era to draft by passing era_id in the form.
-	// If absent (or not a remaining era), pick randomly.
-	_ = r.ParseForm()
-	var lockedEra *f1.Era
-	if eraID := r.FormValue("era_id"); eraID != "" {
-		for _, e := range remaining {
-			if e.ID == eraID {
-				era := e
-				lockedEra = &era
-				break
-			}
-		}
-	}
-
-	spin, err := game.Spin(f1.All(), remaining, lockedEra)
+	spin, err := game.Spin()
 	if err != nil {
 		log.Printf("Spin error for session %s: %v", id, err)
 		http.Error(w, "spin failed", http.StatusInternalServerError)
@@ -100,9 +85,7 @@ func ConstructorSkip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Respin in the same era.
-	era := s.PendingSpin.Era
-	spin, err := game.Spin(f1.All(), s.RemainingEras(), &era)
+	spin, err := game.Spin()
 	if err != nil {
 		log.Printf("Spin (constructor skip) error: %v", err)
 		http.Error(w, "respin failed", http.StatusInternalServerError)
@@ -122,49 +105,6 @@ func ConstructorSkip(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func EraSkip(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	s, err := db.GetSession(r.Context(), id)
-	if err != nil {
-		handleSessionError(w, r, err)
-		return
-	}
-	// Era skip only makes sense when a spin is pending.
-	if s.PendingSpin == nil {
-		http.Error(w, "no active spin to skip", http.StatusBadRequest)
-		return
-	}
-
-	// Atomic conditional decrement.
-	decremented, err := db.DecrementEraSkip(r.Context(), id)
-	if err != nil {
-		log.Printf("DecrementEraSkip error: %v", err)
-		http.Error(w, "era skip failed", http.StatusInternalServerError)
-		return
-	}
-	if !decremented {
-		http.Error(w, "no era skips remaining", http.StatusBadRequest)
-		return
-	}
-
-	spin, err := game.Spin(f1.All(), s.RemainingEras(), nil)
-	if err != nil {
-		log.Printf("Spin (era skip) error: %v", err)
-		http.Error(w, "respin failed", http.StatusInternalServerError)
-		return
-	}
-	if err := db.SaveSpin(r.Context(), id, spin); err != nil {
-		log.Printf("SaveSpin (era skip) error: %v", err)
-		http.Error(w, "respin failed", http.StatusInternalServerError)
-		return
-	}
-
-	s.EraSkipsLeft--
-	renderPartial(w, "spin_result.html", map[string]any{
-		"Session": s,
-		"Spin":    spin,
-	})
-}
 
 func Pick(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -195,7 +135,7 @@ func Pick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pick := f1.Pick{Driver: chosen, Era: s.PendingSpin.Era}
+	pick := f1.Pick{Type: "driver", Driver: chosen}
 
 	// AddPick atomically appends via JSONB — no stale-read lost-update.
 	if err := db.AddPick(r.Context(), id, pick); err != nil {
