@@ -19,21 +19,7 @@
   </div>
 
   <!-- Driver slots -->
-  <div class="grid grid-cols-5 gap-3 mb-8" id="lineup">
-    {{range $i, $p := $s.Picks}}
-    <div class="bg-neutral-800 rounded-lg p-3 text-center text-sm">
-      <div class="text-xs text-neutral-500 mb-1">{{$p.Era.Name}}</div>
-      <div class="font-bold text-white leading-tight">{{$p.Driver.Name}}</div>
-      <div class="text-xs text-neutral-400 mt-1">{{$p.Driver.Constructor}} '{{mod $p.Driver.Season 100 | printf "%02d"}}</div>
-    </div>
-    {{end}}
-    {{range emptySlots $s.Picks}}
-    <div class="bg-neutral-900 border border-dashed border-neutral-700 rounded-lg p-3 text-center text-sm text-neutral-600">
-      <div class="text-2xl mb-1">?</div>
-      <div>Empty</div>
-    </div>
-    {{end}}
-  </div>
+  {{template "lineup.html" (map "Session" $s)}}
 
   <!-- Spin area -->
   <div id="spin-area" class="bg-neutral-900 rounded-xl p-6 text-center">

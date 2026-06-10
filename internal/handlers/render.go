@@ -34,6 +34,7 @@ func init() {
 				"templates/base.html",
 				"templates/partials/spin_result.html",
 				"templates/partials/slot.html",
+				"templates/partials/lineup.html",
 				"templates/"+page,
 			),
 		)
@@ -43,6 +44,7 @@ func init() {
 		template.New("").Funcs(templateFuncs).ParseFS(templateFS,
 			"templates/partials/spin_result.html",
 			"templates/partials/slot.html",
+			"templates/partials/lineup.html",
 		),
 	)
 }

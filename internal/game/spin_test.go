@@ -29,6 +29,22 @@ func TestSpinReturnsValidResult(t *testing.T) {
 	}
 }
 
+// TestSpinEveryRealEraPlayable guards against eras becoming unspinnable when
+// the dataset records only a single driver per constructor-season (as the
+// Classic era does). Every era in the real dataset must yield a valid spin.
+func TestSpinEveryRealEraPlayable(t *testing.T) {
+	for _, era := range f1.Eras {
+		spin, err := Spin(f1.All(), []f1.Era{era}, nil)
+		if err != nil {
+			t.Errorf("era %q is unspinnable: %v", era.ID, err)
+			continue
+		}
+		if spin.DriverA.Name == "" || spin.DriverB.Name == "" {
+			t.Errorf("era %q spin produced an empty driver slot", era.ID)
+		}
+	}
+}
+
 func TestSpinEmptyEraReturnsError(t *testing.T) {
 	buildIndex(nil) // empty index
 	defer buildIndex(f1.All())

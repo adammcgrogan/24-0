@@ -15,4 +15,6 @@
   <p class="text-neutral-400 text-sm">Simulating your season...</p>
   {{end}}
 </div>
+{{/* Out-of-band swap: update the lineup grid so the new pick fills its slot. */}}
+{{template "lineup.html" (map "Session" .Session "OOB" true)}}
 {{end}}

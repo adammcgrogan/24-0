@@ -45,9 +45,12 @@ func buildIndex(drivers []f1.Driver) {
 		// experienced drivers without mutating the original slice.
 		sorted := topTwo(ds)
 		eraPairs[cs] = sorted
-		if len(sorted) >= 2 {
-			eraIndex[eraID] = append(eraIndex[eraID], cs)
-		}
+		// Index every constructor-season that has at least one driver. Sparse
+		// eras (e.g. the Classic era, where the dataset records only a single
+		// notable driver per team-season) would otherwise be empty and make
+		// Spin fail. Single-driver slots are handled by the mirror fallback in
+		// Spin, so the era always remains playable.
+		eraIndex[eraID] = append(eraIndex[eraID], cs)
 	}
 }
 
