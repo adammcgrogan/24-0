@@ -2,12 +2,16 @@ package db
 
 import (
 	"context"
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+//go:embed schema.sql
+var schemaDDL string
 
 // ErrNotConnected is returned by DB functions when the pool has not been
 // successfully initialised (e.g. DATABASE_URL was not set at startup).
@@ -25,6 +29,9 @@ func Connect(ctx context.Context) error {
 		return fmt.Errorf("pgxpool.New: %w", err)
 	}
 	pool = p
+	if _, err := pool.Exec(ctx, schemaDDL); err != nil {
+		return fmt.Errorf("schema migration: %w", err)
+	}
 	return nil
 }
 
