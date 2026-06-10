@@ -32,6 +32,8 @@ func New() http.Handler {
 	r.Get("/", handlers.Home)
 	r.Post("/game/start", handlers.StartGame)
 	r.Get("/game/{id}", handlers.GamePage)
+	r.Get("/game/{id}/simulate", handlers.SimulatePage)
+	r.Post("/game/{id}/simulate", handlers.RunSimulation)
 	r.Post("/game/{id}/spin", handlers.Spin)
 	r.Post("/game/{id}/skip/constructor", handlers.ConstructorSkip)
 	r.Post("/game/{id}/pick/{index}", handlers.Pick)

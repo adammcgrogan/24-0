@@ -6,28 +6,29 @@
 {{$stats := .Stats}}
 <div style="max-width:820px; margin:0 auto; padding:2.5rem 1.5rem 5rem;">
 
-  <!-- ── Score hero ────────────────────────────── -->
+  <!-- ── Score hero ─────────────────────────────────────────────────────── -->
   <div style="text-align:center; margin-bottom:3rem; position:relative; padding:3rem 1rem 2.5rem; overflow:hidden;">
-    <!-- Subtle track grid behind score -->
     <div class="track-grid" style="position:absolute; inset:0; opacity:.35;
       -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black, transparent 80%);
       mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black, transparent 80%);"></div>
 
     <p class="section-label" style="margin-bottom:1rem; position:relative;">Your Season Result</p>
 
-    <div class="f-display anim-slot" style="font-weight:900; line-height:.82; font-size:clamp(6rem,18vw,12rem);
+    <!-- Live score — JS updates these as races come in -->
+    <div id="score-hero" class="f-display" style="font-weight:900; line-height:.82; font-size:clamp(6rem,18vw,12rem);
                 letter-spacing:-.02em; position:relative;">
-      <span>{{$s.Wins}}</span><span style="color:var(--red);">–</span><span>{{sub 24 $s.Wins}}</span>
+      <span id="live-wins">0</span><span style="color:var(--red);">–</span><span id="live-losses">0</span>
     </div>
 
-    <div class="f-display anim-slide-up" style="font-weight:800; font-size:1.6rem; letter-spacing:.06em;
-                text-transform:uppercase; margin-top:.8rem; margin-bottom:.4rem;" >
+    <!-- Tier — fades in after last race -->
+    <div id="tier-display" class="f-display" style="font-weight:800; font-size:1.6rem; letter-spacing:.06em;
+                text-transform:uppercase; margin-top:.8rem; margin-bottom:.4rem; opacity:0;">
       <span class="{{$tier.Class}}">{{$tier.Name}}</span>
     </div>
-    <p style="font-size:.88rem; color:var(--text-3); position:relative;">{{$tier.Description}}</p>
+    <p id="tier-desc" style="font-size:.88rem; color:var(--text-3); position:relative; opacity:0; transition:opacity .5s ease .2s;">{{$tier.Description}}</p>
   </div>
 
-  <!-- ── Team roster ──────────────────────────── -->
+  <!-- ── Team roster ────────────────────────────────────────────────────── -->
   <div style="margin-bottom:2.5rem;">
     <p class="section-label" style="margin-bottom:1rem;">Your Squad</p>
     <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem;">
@@ -47,24 +48,24 @@
     </div>
   </div>
 
-  <!-- ── Race calendar ────────────────────────── -->
+  <!-- ── Race calendar ──────────────────────────────────────────────────── -->
   {{if $s.RaceResults}}
   <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem; margin-bottom:1.5rem;">
     <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.2rem; flex-wrap:wrap; gap:.5rem;">
       <p class="section-label">Race Calendar</p>
       <p style="font-size:.7rem; color:var(--text-3);">
-        <span style="font-family:'Space Mono',monospace;">🏙️</span> Street &nbsp;
-        <span style="font-family:'Space Mono',monospace;">🔧</span> Technical &nbsp;
-        <span style="font-family:'Space Mono',monospace;">🌧️</span> Wet &nbsp;
-        <span style="font-family:'Space Mono',monospace;">🏁</span> Normal
+        🏙️ Street &nbsp; 🔧 Technical &nbsp; 🌧️ Wet &nbsp; 🏁 Normal
       </p>
     </div>
 
-    <!-- Race grid — cells animate in with staggered delay -->
+    <!-- Race grid — each cell carries data attrs; JS reveals them one-by-one -->
     <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:3px; margin-bottom:1rem;">
       {{range $i, $r := $s.RaceResults}}
       <div class="race-cell"
-           style="animation-delay: calc({{$i}} * 28ms); padding:.45rem .3rem; text-align:center;
+           data-race-cell
+           data-won="{{if $r.Won}}true{{else}}false{{end}}"
+           data-dnf="{{if $r.DNF}}true{{else}}false{{end}}"
+           style="padding:.45rem .3rem; text-align:center;
                   {{if $r.DNF}}background:var(--surf-3); border:1px solid var(--border-2);
                   {{else if $r.Won}}background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.3);
                   {{else}}background:rgba(225,6,0,.07); border:1px solid rgba(225,6,0,.2);
@@ -96,95 +97,99 @@
     </div>
   </div>
 
-  <!-- ── Stats row ────────────────────────────── -->
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.5rem;">
-    <!-- Season summary -->
-    <div class="stat-box" style="padding:1.4rem 1.4rem;">
-      <p class="section-label" style="margin-bottom:1rem;">Season Summary</p>
-      <div style="display:flex; flex-direction:column; gap:.55rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
-          <span style="color:var(--text-2);">Wins</span>
-          <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.Wins}}</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
-          <span style="color:var(--text-2);">Losses</span>
-          <span class="f-mono" style="font-weight:700; color:var(--red);">{{$stats.Losses}}</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
-          <span style="color:var(--text-2);">DNFs</span>
-          <span class="f-mono" style="font-weight:700; color:var(--text-3);">{{$stats.DNFs}}</span>
-        </div>
-        <div style="height:1px; background:var(--border); margin:.2rem 0;"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
-          <span style="color:var(--text-2);">Win rate</span>
-          <span class="f-mono" style="font-weight:700; color:var(--text);">{{$stats.WinPct}}%</span>
-        </div>
-      </div>
-    </div>
-    <!-- Records -->
-    <div class="stat-box" style="padding:1.4rem 1.4rem;">
-      <p class="section-label" style="margin-bottom:1rem;">Records</p>
-      <div style="display:flex; flex-direction:column; gap:.55rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
-          <span style="color:var(--text-2);">Longest streak</span>
-          <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.BestStreak}} wins</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
-          <span style="color:var(--text-2);">First win</span>
-          <span class="f-mono" style="font-weight:700; color:var(--text);">{{if gt $stats.FirstWin 0}}R{{$stats.FirstWin}}{{else}}—{{end}}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- ── Post-race: stats + actions + submit — hidden until reveal done ─── -->
+  <div id="post-race">
 
-  <!-- ── Key wins ──────────────────────────────── -->
-  {{if $stats.KeyWins}}
-  <div class="stat-box" style="padding:1.4rem; margin-bottom:1.5rem;">
-    <p class="section-label" style="margin-bottom:1rem;">Standout Moments</p>
-    <div style="display:flex; flex-direction:column; gap:.5rem;">
-      {{range $stats.KeyWins}}
-      <div style="display:flex; align-items:center; gap:.8rem; font-size:.85rem;">
-        <span class="f-mono" style="font-weight:700; color:#34d399; width:1.2rem; text-align:right; flex-shrink:0;">W</span>
-        <span style="color:var(--text-2); flex:1;">{{.Race}}</span>
-        {{if .HeroDriver}}
-        <span style="font-size:.72rem; color:var(--text-3);">
-          {{.HeroDriver}} <span style="color:rgba(225,6,0,.5);">({{.HeroRole}})</span>
-        </span>
+    <!-- Stats row -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.5rem;">
+      <div class="stat-box" style="padding:1.4rem;">
+        <p class="section-label" style="margin-bottom:1rem;">Season Summary</p>
+        <div style="display:flex; flex-direction:column; gap:.55rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+            <span style="color:var(--text-2);">Wins</span>
+            <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.Wins}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+            <span style="color:var(--text-2);">Losses</span>
+            <span class="f-mono" style="font-weight:700; color:var(--red);">{{$stats.Losses}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+            <span style="color:var(--text-2);">DNFs</span>
+            <span class="f-mono" style="font-weight:700; color:var(--text-3);">{{$stats.DNFs}}</span>
+          </div>
+          <div style="height:1px; background:var(--border); margin:.2rem 0;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+            <span style="color:var(--text-2);">Win rate</span>
+            <span class="f-mono" style="font-weight:700; color:var(--text);">{{$stats.WinPct}}%</span>
+          </div>
+        </div>
+      </div>
+      <div class="stat-box" style="padding:1.4rem;">
+        <p class="section-label" style="margin-bottom:1rem;">Records</p>
+        <div style="display:flex; flex-direction:column; gap:.55rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+            <span style="color:var(--text-2);">Longest streak</span>
+            <span class="f-mono" style="font-weight:700; color:#34d399;">{{$stats.BestStreak}} wins</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:.88rem;">
+            <span style="color:var(--text-2);">First win</span>
+            <span class="f-mono" style="font-weight:700; color:var(--text);">{{if gt $stats.FirstWin 0}}R{{$stats.FirstWin}}{{else}}—{{end}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key wins -->
+    {{if $stats.KeyWins}}
+    <div class="stat-box" style="padding:1.4rem; margin-bottom:1.5rem;">
+      <p class="section-label" style="margin-bottom:1rem;">Standout Moments</p>
+      <div style="display:flex; flex-direction:column; gap:.5rem;">
+        {{range $stats.KeyWins}}
+        <div style="display:flex; align-items:center; gap:.8rem; font-size:.85rem;">
+          <span class="f-mono" style="font-weight:700; color:#34d399; width:1.2rem; text-align:right; flex-shrink:0;">W</span>
+          <span style="color:var(--text-2); flex:1;">{{.Race}}</span>
+          {{if .HeroDriver}}
+          <span style="font-size:.72rem; color:var(--text-3);">
+            {{.HeroDriver}} <span style="color:rgba(225,6,0,.5);">({{.HeroRole}})</span>
+          </span>
+          {{end}}
+        </div>
         {{end}}
       </div>
-      {{end}}
     </div>
-  </div>
-  {{end}}
-  {{end}}
+    {{end}}
 
-  <!-- ── Actions ───────────────────────────────── -->
-  <div style="display:flex; flex-direction:column; align-items:center; gap:.8rem; margin-bottom:2rem;">
-    <button
-      onclick="navigator.clipboard.writeText(window.location.href); this.textContent='✓ Copied!';"
-      class="btn-secondary"
-      style="clip-path:none; border-radius:2px; padding:.65rem 1.8rem;">
-      Copy share link
-    </button>
-    <a href="/" style="font-size:.85rem; color:var(--text-3); text-decoration:none; transition:color .15s;"
-       onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">
-      Play again →
-    </a>
-  </div>
-
-  <!-- ── Leaderboard submit ─────────────────────── -->
-  <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem; position:relative; overflow:hidden;">
-    <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
-    <p class="section-label" style="margin-bottom:.5rem;">Submit to Leaderboard</p>
-    <h3 class="f-display" style="font-weight:800; font-size:1.2rem; letter-spacing:.02em; margin-bottom:1.2rem;">Make it official.</h3>
-    <form action="/result/{{$s.ID}}/submit" method="POST" style="display:flex; gap:.6rem; align-items:stretch;">
-      <input type="text" name="name" placeholder="Your name" maxlength="50" required
-             style="flex:1;" />
-      <button type="submit" class="btn-launch" style="clip-path:none; border-radius:2px; animation:none; font-size:.92rem; padding:.65rem 1.6rem; flex-shrink:0;">
-        Submit
+    <!-- Actions -->
+    <div style="display:flex; flex-direction:column; align-items:center; gap:.8rem; margin-bottom:2rem;">
+      <button
+        onclick="navigator.clipboard.writeText(window.location.href); this.textContent='✓ Copied!';"
+        class="btn-secondary"
+        style="clip-path:none; border-radius:2px; padding:.65rem 1.8rem;">
+        Copy share link
       </button>
-    </form>
-  </div>
+      <a href="/" style="font-size:.85rem; color:var(--text-3); text-decoration:none; transition:color .15s;"
+         onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">
+        Play again →
+      </a>
+    </div>
+
+    <!-- Leaderboard submit -->
+    <div class="carbon" style="border:1px solid var(--border); border-radius:2px; padding:1.6rem; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--red) 0%, transparent 100%);"></div>
+      <p class="section-label" style="margin-bottom:.5rem;">Submit to Leaderboard</p>
+      <h3 class="f-display" style="font-weight:800; font-size:1.2rem; letter-spacing:.02em; margin-bottom:1.2rem;">Make it official.</h3>
+      <form action="/result/{{$s.ID}}/submit" method="POST" style="display:flex; gap:.6rem; align-items:stretch;">
+        <input type="text" name="name" placeholder="Your name" maxlength="50" required style="flex:1;" />
+        <button type="submit" class="btn-launch" style="clip-path:none; border-radius:2px; animation:none; font-size:.92rem; padding:.65rem 1.6rem; flex-shrink:0;">
+          Submit
+        </button>
+      </form>
+    </div>
+
+  </div><!-- #post-race -->
+  {{end}}
 
 </div>
+
+<script src="/static/race-reveal.js"></script>
 {{end}}

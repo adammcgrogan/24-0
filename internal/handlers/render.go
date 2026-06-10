@@ -22,6 +22,7 @@ var partialTemplates *template.Template
 var pages = []string{
 	"home.html",
 	"draft.html",
+	"simulate.html",
 	"result.html",
 	"leaderboard.html",
 }

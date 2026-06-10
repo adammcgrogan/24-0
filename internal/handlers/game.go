@@ -23,6 +23,10 @@ func GamePage(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/result/"+id, http.StatusSeeOther)
 		return
 	}
+	if s.IsComplete() {
+		http.Redirect(w, r, "/game/"+id+"/simulate", http.StatusSeeOther)
+		return
+	}
 	renderTemplate(w, "draft.html", s)
 }
 
@@ -152,18 +156,9 @@ func Pick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If all 10 picks made, run simulation and complete.
+	// All picks made — send player to the simulate page before revealing results.
 	if s.IsComplete() {
-		result := game.SimulateSeason(s.Picks, game.CachedFieldAverage)
-		tier := game.TierForWins(result.Wins).Name
-
-		if err := db.Complete(r.Context(), id, result.Wins, tier, result.Races); err != nil {
-			log.Printf("Complete error for session %s: %v", id, err)
-			http.Error(w, "simulation failed", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("HX-Redirect", "/result/"+id)
+		w.Header().Set("HX-Redirect", "/game/"+id+"/simulate")
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -273,16 +268,7 @@ func PickComponent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if s.IsComplete() {
-		result := game.SimulateSeason(s.Picks, game.CachedFieldAverage)
-		tier := game.TierForWins(result.Wins).Name
-
-		if err := db.Complete(r.Context(), id, result.Wins, tier, result.Races); err != nil {
-			log.Printf("Complete error for session %s: %v", id, err)
-			http.Error(w, "simulation failed", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("HX-Redirect", "/result/"+id)
+		w.Header().Set("HX-Redirect", "/game/"+id+"/simulate")
 		w.WriteHeader(http.StatusOK)
 		return
 	}
