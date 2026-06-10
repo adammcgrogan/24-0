@@ -11,23 +11,51 @@ import (
 //go:embed templates
 var templateFS embed.FS
 
-var tmpl *template.Template
+// pageTemplates holds one parsed template set per page so that each page's
+// {{define "content"}} block is isolated and cannot be overwritten by another
+// page's definition (a known pitfall when all pages share one template.Template).
+var pageTemplates map[string]*template.Template
+
+// partialTemplates holds partials for standalone HTMX swap responses.
+var partialTemplates *template.Template
+
+var pages = []string{
+	"home.html",
+	"draft.html",
+	"result.html",
+	"leaderboard.html",
+}
 
 func init() {
-	tmpl = template.Must(
+	pageTemplates = make(map[string]*template.Template, len(pages))
+	for _, page := range pages {
+		pageTemplates[page] = template.Must(
+			template.New("").Funcs(templateFuncs).ParseFS(templateFS,
+				"templates/base.html",
+				"templates/partials/spin_result.html",
+				"templates/partials/slot.html",
+				"templates/"+page,
+			),
+		)
+	}
+
+	partialTemplates = template.Must(
 		template.New("").Funcs(templateFuncs).ParseFS(templateFS,
-			"templates/*.html",
-			"templates/partials/*.html",
+			"templates/partials/spin_result.html",
+			"templates/partials/slot.html",
 		),
 	)
 }
 
-// renderTemplate renders a named template into a buffer first. If rendering
-// succeeds the buffer is flushed to the response. On error a generic 500 is
-// returned without leaking internal details to the client.
 func renderTemplate(w http.ResponseWriter, name string, data any) {
+	t, ok := pageTemplates[name]
+	if !ok {
+		log.Printf("renderTemplate: unknown page %q", name)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
 	var buf bytes.Buffer
-	if err := tmpl.ExecuteTemplate(&buf, name, data); err != nil {
+	if err := t.ExecuteTemplate(&buf, "base", data); err != nil {
 		log.Printf("renderTemplate %q: %v", name, err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
@@ -36,10 +64,9 @@ func renderTemplate(w http.ResponseWriter, name string, data any) {
 	_, _ = buf.WriteTo(w)
 }
 
-// renderPartial renders a named partial template into a buffer for HTMX swaps.
 func renderPartial(w http.ResponseWriter, name string, data any) {
 	var buf bytes.Buffer
-	if err := tmpl.ExecuteTemplate(&buf, name, data); err != nil {
+	if err := partialTemplates.ExecuteTemplate(&buf, name, data); err != nil {
 		log.Printf("renderPartial %q: %v", name, err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
