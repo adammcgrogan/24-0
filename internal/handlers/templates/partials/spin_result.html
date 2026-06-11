@@ -30,7 +30,6 @@
     class="pick-card anim-slide-left"
     style="padding:1.5rem; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; border-right:none; border-radius:2px 0 0 2px;">
 
-    <!-- Name row -->
     <div style="display:flex; align-items:flex-start; gap:.7rem; margin-bottom:1rem;">
       <div class="option-badge">A</div>
       <div style="flex:1; min-width:0;">
@@ -39,26 +38,21 @@
       </div>
     </div>
 
-    <!-- Stats -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.35rem; margin-bottom:.9rem;">
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, var(--border-2), transparent);"></div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center;">
         <div class="f-mono" style="font-size:1.25rem; font-weight:700; color:var(--text); line-height:1;">{{$spin.DriverA.Wins}}</div>
         <div style="font-size:.56rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase;">Wins</div>
       </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, var(--border-2), transparent);"></div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center;">
         <div class="f-mono" style="font-size:1.25rem; font-weight:700; color:var(--text); line-height:1;">{{$spin.DriverA.Poles}}</div>
         <div style="font-size:.56rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase;">Poles</div>
       </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, var(--border-2), transparent);"></div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center;">
         <div class="f-mono" style="font-size:1.25rem; font-weight:700; color:var(--text); line-height:1;">{{printf "%.0f" $spin.DriverA.Points}}</div>
         <div style="font-size:.56rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase;">Pts</div>
       </div>
     </div>
 
-    <!-- Pace bar -->
     <div style="margin-bottom:auto;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.35rem;">
         <span class="section-label">Pace Rating</span>
@@ -69,7 +63,6 @@
       </div>
     </div>
 
-    <!-- Pick footer -->
     <div class="card-footer" style="margin-left:-1.5rem; margin-right:-1.5rem; margin-bottom:-1.5rem;">
       Pick A &nbsp;→
     </div>
@@ -88,7 +81,6 @@
     class="pick-card anim-slide-right"
     style="padding:1.5rem; text-align:left; display:flex; flex-direction:column; width:100%; height:100%; border-left:none; border-radius:0 2px 2px 0;">
 
-    <!-- Name row -->
     <div style="display:flex; align-items:flex-start; gap:.7rem; margin-bottom:1rem;">
       <div class="option-badge">B</div>
       <div style="flex:1; min-width:0;">
@@ -97,26 +89,21 @@
       </div>
     </div>
 
-    <!-- Stats -->
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:.35rem; margin-bottom:.9rem;">
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, var(--border-2), transparent);"></div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center;">
         <div class="f-mono" style="font-size:1.25rem; font-weight:700; color:var(--text); line-height:1;">{{$spin.DriverB.Wins}}</div>
         <div style="font-size:.56rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase;">Wins</div>
       </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, var(--border-2), transparent);"></div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center;">
         <div class="f-mono" style="font-size:1.25rem; font-weight:700; color:var(--text); line-height:1;">{{$spin.DriverB.Poles}}</div>
         <div style="font-size:.56rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase;">Poles</div>
       </div>
-      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, var(--border-2), transparent);"></div>
+      <div style="background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.65rem .3rem; text-align:center;">
         <div class="f-mono" style="font-size:1.25rem; font-weight:700; color:var(--text); line-height:1;">{{printf "%.0f" $spin.DriverB.Points}}</div>
         <div style="font-size:.56rem; color:var(--text-3); margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase;">Pts</div>
       </div>
     </div>
 
-    <!-- Pace bar -->
     <div style="margin-bottom:auto;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.35rem;">
         <span class="section-label">Pace Rating</span>
@@ -127,7 +114,6 @@
       </div>
     </div>
 
-    <!-- Pick footer -->
     <div class="card-footer" style="margin-left:-1.5rem; margin-right:-1.5rem; margin-bottom:-1.5rem;">
       Pick B &nbsp;→
     </div>

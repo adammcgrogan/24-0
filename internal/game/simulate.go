@@ -50,7 +50,6 @@ var raceCalendar = []circuit{
 const baseDNFChance = 0.05
 
 // componentWeights defines how much each team role contributes per circuit type.
-// Weights sum to 1.0 within each circuit type.
 var componentWeights = map[string]map[string]float64{
 	"principal": {"normal": 0.30, "technical": 0.20, "street": 0.20, "wet": 0.30},
 	"td":        {"normal": 0.20, "technical": 0.40, "street": 0.15, "wet": 0.15},
@@ -60,8 +59,7 @@ var componentWeights = map[string]map[string]float64{
 }
 
 // SimulateSeason runs a full 24-race season for the given picks.
-// Driver contribution is the average pace of both drivers.
-// Component contribution varies by circuit type.
+// Drivers contribute 60% of team pace; team roles contribute 40%, weighted by circuit type.
 func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 	if len(picks) == 0 {
 		return emptySeasonResult()
@@ -70,7 +68,7 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 		fieldAverage = 50
 	}
 
-	// Average driver pace.
+	// Average driver pace + find the hero driver.
 	driverPace := 0.0
 	driverCount := 0
 	heroDriver := ""
@@ -132,7 +130,7 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 			compPace = fieldAverage
 		}
 
-		// Blend 60% drivers / 40% components.
+		// Blend 60% drivers / 40% team roles.
 		teamPace := driverPace*0.60 + compPace*0.40
 		winProb := clamp(teamPace/(teamPace+fieldAverage), 0, 0.94)
 
@@ -163,7 +161,6 @@ func SimulateSeason(picks []f1.Pick, fieldAverage float64) SeasonResult {
 }
 
 // Simulate is a backward-compatible wrapper used by tests.
-// Returns 0 if no driver has a valid PaceScore.
 func Simulate(lineup []f1.Driver, fieldAverage float64) int {
 	valid := 0
 	for _, d := range lineup {

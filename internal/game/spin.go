@@ -12,7 +12,7 @@ type constructorSeason struct {
 	season      int
 }
 
-var allPairs   []constructorSeason
+var allPairs  []constructorSeason
 var driverPool map[constructorSeason][]f1.Driver
 
 func init() {
@@ -79,44 +79,24 @@ func Spin() (f1.SpinResult, error) {
 	return result, nil
 }
 
-// componentIndex is pre-built at startup: category → eraID → list of components.
-var componentIndex map[string]map[string][]f1.TeamComponent
+// componentIndex is pre-built at startup: category → list of all components.
+var componentIndex map[string][]f1.TeamComponent
 
 func init() {
-	componentIndex = map[string]map[string][]f1.TeamComponent{}
+	componentIndex = map[string][]f1.TeamComponent{}
 	for _, c := range f1.AllComponents() {
-		if componentIndex[c.Category] == nil {
-			componentIndex[c.Category] = map[string][]f1.TeamComponent{}
-		}
-		componentIndex[c.Category][c.Era] = append(componentIndex[c.Category][c.Era], c)
+		componentIndex[c.Category] = append(componentIndex[c.Category], c)
 	}
 }
 
-// SpinComponent picks a random pair from the given component category.
+// SpinComponent picks two random options from the given component category.
 func SpinComponent(category string) (f1.ComponentSpin, error) {
-	byEra, ok := componentIndex[category]
-	if !ok || len(byEra) == 0 {
+	options, ok := componentIndex[category]
+	if !ok || len(options) == 0 {
 		return f1.ComponentSpin{}, fmt.Errorf("no components for category %q", category)
 	}
 
-	eras := make([]string, 0, len(byEra))
-	for e := range byEra {
-		if len(byEra[e]) > 0 {
-			eras = append(eras, e)
-		}
-	}
-	eraID := eras[rand.IntN(len(eras))]
-	options := byEra[eraID]
-
-	var spinEra f1.Era
-	for _, e := range f1.Eras {
-		if e.ID == eraID {
-			spinEra = e
-			break
-		}
-	}
-
-	spin := f1.ComponentSpin{Category: category, Era: spinEra}
+	spin := f1.ComponentSpin{Category: category}
 	if len(options) == 1 {
 		spin.OptionA = options[0]
 		spin.OptionB = options[0]

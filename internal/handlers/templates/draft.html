@@ -10,7 +10,7 @@
     <div>
       <p class="section-label" style="margin-bottom:.4rem;">Team Builder</p>
       <h2 class="f-display" style="font-weight:900; font-size:2rem; letter-spacing:-.01em; line-height:1;">Build Your Team</h2>
-      <p style="font-size:.85rem; color:var(--text-3); margin-top:.3rem;">Draft 2 drivers and 5 team roles.</p>
+      <p style="font-size:.85rem; color:var(--text-3); margin-top:.3rem;">Draft 2 drivers and fill all 5 team roles.</p>
     </div>
 
     <!-- Progress column -->
@@ -26,7 +26,7 @@
         <div class="pip {{if gt $n 6}}done{{else if eq $n 6}}next{{end}}"></div>
       </div>
       <div class="f-mono" style="font-size:.68rem; color:var(--text-3);">
-        <span style="color:var(--red); font-weight:700;">{{$n}}</span> / 7 drafted
+        <span style="color:var(--red); font-weight:700;">{{$n}}</span> / 7 picked
       </div>
       <div style="display:flex; align-items:center; gap:.4rem; background:var(--surf); border:1px solid var(--border); border-radius:2px; padding:.3rem .75rem;">
         <span style="font-size:.75rem; color:{{if eq $s.ConstructorSkipsLeft 0}}var(--text-3){{else}}var(--text-2){{end}};">🔄</span>
@@ -50,6 +50,7 @@
       {{template "component_spin.html" (map "Session" $s "Spin" $s.PendingComponentSpin)}}
     {{else}}
     <div class="anim-slide-up">
+
       {{if $s.NeedsDriver}}
       <div style="margin-bottom:1rem;">
         <button
@@ -72,7 +73,7 @@
 
       {{if $s.RemainingComponentCategories}}
       <div style="margin-top:{{if $s.NeedsDriver}}1.6rem{{else}}0{{end}};">
-        <p class="section-label" style="margin-bottom:.9rem;">Draft a Team Role</p>
+        <p class="section-label" style="margin-bottom:.9rem;">Pick a Team Role</p>
         <div style="display:flex; flex-direction:column; gap:.4rem;">
           {{range $s.RemainingComponentCategories}}
           <button
@@ -92,6 +93,7 @@
         </div>
       </div>
       {{end}}
+
     </div>
 
     <!-- HTMX loading indicator -->

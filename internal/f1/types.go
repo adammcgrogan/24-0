@@ -177,7 +177,7 @@ func (s *Session) RemainingComponentCategories() []ComponentCategoryMeta {
 	return out
 }
 
-// IsComplete returns true when both drivers and all 5 component roles are picked.
+// IsComplete returns true when both drivers and all 5 team roles are picked.
 func (s *Session) IsComplete() bool {
 	return !s.NeedsDriver() && len(s.RemainingComponentCategories()) == 0
 }

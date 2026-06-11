@@ -57,6 +57,14 @@ func ComputeStats(races []f1.RaceResult) SeasonStats {
 	return s
 }
 
+// circuitTypeColor returns a CSS color for a circuit type badge.
+var circuitTypeColor = map[string]string{
+	"street":    "#f59e0b",
+	"technical": "#14b8a6",
+	"wet":       "#3b82f6",
+	"normal":    "#676767",
+}
+
 // templateFuncs registers helper functions available in all templates.
 var templateFuncs = template.FuncMap{
 	"add": func(a, b int) int { return a + b },
@@ -70,15 +78,15 @@ var templateFuncs = template.FuncMap{
 		}
 		return m
 	},
-	// emptySlots returns empty structs for unfilled driver slots (legacy helper).
-	"emptySlots": func(picks []f1.Pick) []struct{} {
+	// emptyDriverSlots returns empty structs for unfilled driver slots.
+	"emptyDriverSlots": func(picks []f1.Pick) []struct{} {
 		drivers := 0
 		for _, p := range picks {
 			if p.Type != "component" {
 				drivers++
 			}
 		}
-		n := 5 - drivers
+		n := 2 - drivers
 		if n < 0 {
 			n = 0
 		}
@@ -106,6 +114,20 @@ var templateFuncs = template.FuncMap{
 			}
 		}
 		return catID
+	},
+	// specialtyLabel returns a readable label + icon for a component specialty.
+	"specialtyLabel": func(s string) string {
+		switch s {
+		case "street":
+			return "🏙️ Street"
+		case "technical":
+			return "🔧 Technical"
+		case "wet":
+			return "🌧️ Wet"
+		case "all":
+			return "🏁 All circuits"
+		}
+		return s
 	},
 	// shortRaceName strips " Grand Prix" to keep the grid compact.
 	"shortRaceName": func(name string) string {

@@ -35,7 +35,7 @@ func CreateSession(ctx context.Context) (string, error) {
 	}
 	_, err = pool.Exec(ctx,
 		`INSERT INTO sessions (id, picks, constructor_skips_left, era_skips_left)
-		 VALUES ($1, '[]', 1, 1)`, id)
+		 VALUES ($1, '[]', 3, 0)`, id)
 	if err != nil {
 		return "", fmt.Errorf("CreateSession: %w", err)
 	}
